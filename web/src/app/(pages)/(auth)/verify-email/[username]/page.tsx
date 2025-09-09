@@ -29,8 +29,8 @@ export default function Verify() {
             setMsg(data?.msg);
             if (res.ok && data.success) {
                 setTimeout(() => {
-                    router.push('/login');
-                }, 2000);
+                    router.push('/sign-in');
+                }, 1500);
             }
         }
         catch (err) {

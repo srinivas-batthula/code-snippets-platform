@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { email, z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,9 +27,10 @@ import axios, { AxiosError } from "axios";
 import { useDebounceCallback } from "usehooks-ts";
 import { Background } from "@/components/background";
 import Link from "next/link";
+import { da, fa } from "zod/v4/locales";
 
-function Page(){
-  return(
+function Page() {
+  return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen ">
       <div className="h-screen relative max-md:hidden">
         <Background src="/signup-pic.jpg" classname="rounded-none lg:rounded-l-none" />
@@ -44,36 +45,42 @@ function SignUpForm() {
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState<boolean>(false);
+  const [usernameStatus, setUsernameStatus] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const debounced = useDebounceCallback(setUsername, 1000);
 
-  // useEffect(() => {
-  //   const checkUsernameUnique = async () => {
-  //     if (username) {
-  //       setIsCheckingUsername(true);
-  //       setUsernameMessage("");
+  useEffect(() => {
+    const checkUsernameUnique = async () => {
+      if (username && username.length > 3) {
+        setIsCheckingUsername(true);
+        setUsernameMessage("");
 
-  //       try {
-  //         const response = await axios.get(
-  //           `/api/check-username-unique?username=${username}`, //todo: make a route for checking username uniqueness
-  //         );
-  //         setUsernameMessage(response.data.message);
-  //       } catch (error) {
-  //         const axiosError = error as AxiosError<ApiResponse>;
-  //         setUsernameMessage(
-  //           axiosError.response?.data.message ?? "Error checking username",
-  //         );
-  //       } finally {
-  //         setIsCheckingUsername(false);
-  //       }
-  //     }
-  //   };
+        try {
+          const response = await axios.get(
+            `/api/auth/check-username-unique?username=${username}`,
+          );
+          setUsernameMessage(response.data.message);
+          setUsernameStatus(response.data.success);
+        } catch (error) {
+          const axiosError = error as AxiosError<ApiResponse>;
+          setUsernameMessage(
+            axiosError.response?.data.message ?? "Error checking username",
+          );
+          setUsernameStatus(false);
+        } finally {
+          setIsCheckingUsername(false);
+        }
+      }
+      else {
+        setUsernameMessage("");
+      }
+    };
 
-  //   checkUsernameUnique();
-  // }, [username]); // runs when username changes
+    checkUsernameUnique();
+  }, [username]); // runs when username changes
 
   const form = useForm({
     resolver: zodResolver(signUpformSchema),
@@ -89,7 +96,19 @@ function SignUpForm() {
     console.log(data);
     setIsSubmitting(true);
     try {
-      //api logic
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: data.username, email: data.email, password: data.password }),
+      });
+      const resp = await res.json();
+      alert(resp?.message);
+
+      if (res.ok && resp.success) {
+        setTimeout(() => {
+          router.push(`/verify-email/${data.username}`);
+        }, 1500);
+      }
     } catch (error) {
       toast.error("Login Failed", {
         description: "An unexpected error occurred.",
@@ -103,17 +122,7 @@ function SignUpForm() {
     console.log("Google Sign Up");
     setIsSubmitting(true);
     try {
-      const result = await signIn("google", {
-        redirect: false,
-      });
-
-      if (result?.error) {
-        toast.error("Login Failed", {
-          description: "Please try later (google).",
-        });
-      } else if (result?.url) {
-        router.replace("/dashboard");
-      }
+      await signIn("google", { callbackUrl: "/dashboard" });
     } catch (error) {
       toast.error("Login Failed", {
         description: "An unexpected error occurred.",
@@ -139,16 +148,19 @@ function SignUpForm() {
                     <Input
                       placeholder=""
                       {...field}
-                      //  onChange={(e) => {
-                      //   field.onChange(e);
-                      //   debounced(e.target.value);
-                      // }} //TODO: enable this after making the api
+                      onChange={(e) => {
+                        field.onChange(e);
+                        debounced(e.target.value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <span style={{ color: usernameStatus ? 'green' : 'red' }}>{usernameMessage}</span>  {/* Add UI for this msg,, also solve the issue that for each fetch to check-username, page is refreshing... */}
+
             <FormField
               control={form.control}
               name="email"

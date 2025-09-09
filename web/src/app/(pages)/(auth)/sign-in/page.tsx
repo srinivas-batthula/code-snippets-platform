@@ -27,8 +27,8 @@ import { Background } from "@/components/background";
 import Link from "next/link";
 
 
-function Page(){
-  return(
+function Page() {
+  return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen ">
       <SignInForm />
       <div className="h-screen relative max-md:hidden">
@@ -60,18 +60,20 @@ function SignInForm() {
     console.log(data);
     setIsSubmitting(true);
     try {
-      const result = await signIn("credentials", {
+      const res = await signIn("credentials", {
         redirect: false,
-        username: data.username,
+        email: data.username,
         password: data.password,
+        callbackUrl: "/dashboard",
       });
-      
-      if (result?.error) {
+
+      if (res?.ok && res.url) {
+        router.push(res.url); // manually redirect on success
+      }
+      else {
         toast.error("Login Failed", {
           description: "Invalid email or password.",
         });
-      } else if (result?.url) {
-        router.replace("/dashboard");
       }
     } catch (error) {
       toast.error("Login Failed", {
@@ -86,17 +88,7 @@ function SignInForm() {
     console.log("Google Sign In");
     setIsSubmitting(true);
     try {
-      const result = await signIn("google", {
-        redirect: false,
-      });
-      
-      if (result?.error) {
-        toast.error("Login Failed", {
-          description: "Please try later (google).",
-        });
-      } else if (result?.url) {
-        router.replace("/dashboard");
-      }
+      await signIn("google", { callbackUrl: "/dashboard" });
     } catch (error) {
       toast.error("Login Failed", {
         description: "An unexpected error occurred.",
@@ -117,7 +109,7 @@ function SignInForm() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Username Or Email</FormLabel>
                   <FormControl>
                     <Input placeholder="" {...field} />
                   </FormControl>

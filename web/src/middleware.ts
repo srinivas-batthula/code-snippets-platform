@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
         // All protected routes...
-const protectedPaths = ['/profile', '/upload'];
+const protectedPaths = ['/profile', '/dashboard'];
 
 export async function middleware(req: NextRequest) {
     const token = await getToken({ req, secret: process.env.JWT_SECRET });
