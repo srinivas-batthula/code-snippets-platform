@@ -14,7 +14,7 @@ export function registerHelloWorld(context: vscode.ExtensionContext) {
                 { enableScripts: true }
             );
             panel.webview.html = getHelloPanelHtml();
-            log('Opened Hello Panel : CodeSnippets');
+            log('Opened Hello Panel', "info");
 
             panel.webview.onDidReceiveMessage(
                 message => {

@@ -100,7 +100,7 @@ function SignInForm() {
 
   return (
     <section className="flex flex-col items-center py-24 h-screen justify-center">
-      <div className="border-2 p-8 rounded-xl w-full max-w-md bg-white  outline-1 outline-black/10 shadow-lg flex flex-col ">
+      <div className="border-2 p-8 rounded-xl w-full max-w-md bg-white  outline-1 outline-black/10 shadow-lg flex flex-col">
         <h1 className="text-center text-2xl font-bold mb-12">Login</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

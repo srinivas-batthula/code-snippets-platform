@@ -36,8 +36,8 @@ export const authOptions: NextAuthOptions = {
 
         // GitHub OAuth
         GitHubProvider({
-            clientId: process.env.LOCALHOST_GITHUB_CLIENT_ID!,
-            clientSecret: process.env.LOCALHOST_GITHUB_CLIENT_SECRET!,
+            clientId: process.env.GITHUB_CLIENT_ID!,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET!,
         }),
 
         // Credentials Provider (username/email login)

@@ -9,7 +9,7 @@
   },
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.70.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
     "Other",
@@ -24,10 +24,38 @@
   "icon": "src/assets/icon.png",
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "CodeSnippets : Settings",
+      "properties": {
+        "codesnippets.apiBaseUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "Base URL for CodeSnippets backend API"
+        },
+        "codesnippets.secretKey": {
+          "type": "string",
+          "default": "codesnippets.jwt",
+          "description": "Secret-Key for storing JWT"
+        },
+        "codesnippets.extensionName": {
+          "type": "string",
+          "default": "CodeSnippets"
+        }
+      }
+    },
     "commands": [
       {
         "command": "codesnippets.helloWorld",
         "title": "Hello World : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.login",
+        "title": "Login : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.logout",
+        "title": "Logout : CodeSnippets"
       }
     ]
   },
@@ -51,6 +79,6 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "dotenv": "^17.2.2"
+    "node-fetch": "^3.3.2"
   }
 }
