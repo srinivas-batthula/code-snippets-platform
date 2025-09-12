@@ -1,6 +1,6 @@
 // src/extension.ts
 import * as vscode from 'vscode';
-import { registerHelloWorld } from './commands/helloWorld';
+import { registerIntro } from './commands/intro';
 import { registerLogin } from './commands/login';
 import { registerLogout } from './commands/logout';
 import uriHandler from './utils/handle_Uris';
@@ -11,7 +11,7 @@ dotenv.config();
 // Central place to register all commands...
 // This `extension.ts` is called to activate / deactivate the extension...
 export function activate(context: vscode.ExtensionContext) {
-    registerHelloWorld(context);
+    registerIntro(context);
     registerLogin(context);
     registerLogout(context);
 

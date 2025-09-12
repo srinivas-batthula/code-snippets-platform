@@ -25,14 +25,14 @@ export async function GET(req: Request) {
         if (!user) return NextResponse.json({ ok: false, message: 'User Not Found in DB!' }, { status: 404 });
 
         // jwt signature uses JWT_SECRET; payload minimal (uid + login)
-        const payload = { userId: (user as any)._id.toString(), username: user.username };
+        const payload = { userId: (user as any)._id.toString() };
         const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '30d' });
 
         // cleanup pending (single-use)
         await Auth.findByIdAndDelete(entry._id);
 
         // return JWT to extension (the extension stores it into SecretStorage)
-        return NextResponse.json({ ok: true, token, message: 'PAT Access-Token generated successfully.' }, { status: 200 });
+        return NextResponse.json({ ok: true, token, username: user.username, message: 'PAT Access-Token generated successfully.' }, { status: 200 });
     }
     catch (err) {
         return NextResponse.json({ ok: false, message: (err as any).message || 'Error in `/api/auth/status`!' }, { status: 500 });

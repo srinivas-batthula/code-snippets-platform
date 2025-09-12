@@ -36,9 +36,10 @@ export async function ensureAuth(context: vscode.ExtensionContext) {
                 const st = await fetch(`${API_BASE}/api/auth/status?state=${state}`);
                 if (!st.ok) continue;
 
-                const sj = await st.json() as { ok: boolean, token?: string, message: string };
+                const sj = await st.json() as { ok: boolean, token?: string, username?: string, message: string };
                 if (sj.ok && sj.token) {
                     await context.secrets.store(SECRET_KEY, sj.token);  // store JWT securely in SecretStorage and return it
+                    await context.globalState.update('username', sj.username);
                     log('Login successful (JWT length: ' + (sj.token?.length || 0) + ')', "info");
                     return sj.token;
                 }
