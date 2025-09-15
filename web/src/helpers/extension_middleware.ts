@@ -1,13 +1,13 @@
 // src/helpers/extension_middleware.ts
-import { NextRequest } from 'next/server';
+import { connectDB } from '@/lib/dbConnect';
 import jwt from 'jsonwebtoken';
-import User from '../models/User';
+import User from '@/models/User';
 
 const SECRET = process.env.JWT_SECRET!;
 
-export async function middleware(req: NextRequest) {
+export async function middleware(req: Request) {
     const authHeader = req.headers.get('authorization');
-    const token = authHeader?.split(' ')[1]; // `Bearer <token>`
+    const token = authHeader?.split(' ')[1]; // `Bearer <token>` from VSCode-Extension...
 
     if (!token) {
         return {
@@ -18,10 +18,11 @@ export async function middleware(req: NextRequest) {
     }
     try {
         const decoded = jwt.verify(token, SECRET);
-        if (!decoded || typeof decoded !== 'object' || !('userId' in decoded)) {
+        if (!decoded) {
             throw new Error('Invalid Token');
         }
 
+        await connectDB();
         const user = await User.findById((decoded as jwt.JwtPayload).userId);
         if (!user) {
             throw new Error('User Not Found');

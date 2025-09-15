@@ -56,8 +56,29 @@
       {
         "command": "codesnippets.logout",
         "title": "Logout : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.exportSnippet",
+        "title": "Export Selected Code as Snippet : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.importSnippet",
+        "title": "Import Snippet by ID : CodeSnippets"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codesnippets.exportSnippet",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        },
+        {
+          "command": "codesnippets.importSnippet",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

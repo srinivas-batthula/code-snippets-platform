@@ -1,7 +1,7 @@
 // src/panels/introPanel.ts
 
 export function getIntroPanelHtml(username: string): string {
-    return `
+  return `
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -76,6 +76,14 @@ export function getIntroPanelHtml(username: string): string {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
       }
+      .quick-guide {
+        font-size: 0.95rem;
+        color: white;
+        text-align: left;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
     </style>
   </head>
   <body>
@@ -88,6 +96,14 @@ export function getIntroPanelHtml(username: string): string {
         
         <button onclick="sendCommand('login')">Login</button>
         <button onclick="sendCommand('logout')">Logout</button>
+      </div>
+
+      <div class="quick-guide">
+        <strong>To Export a Snippet : </strong><br/>
+        Select code → Right click over it → Click on <em>'Export Selected Code as Snippet : CodeSnippets'</em> → Your code snippet is uploaded to the cloud!
+        <br/><br/>
+        <strong>To Import a Snippet : </strong><br/>
+        Right click anywhere in the editor → Click on <em>'Import Snippet by ID : CodeSnippets'</em> → Enter the ID to load and insert the snippet into current file.
       </div>
 
       <p class="footer-text">~ Team CodeSnippets</p>
