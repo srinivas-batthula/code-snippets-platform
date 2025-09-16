@@ -196,7 +196,41 @@ export default MyComponent;`;
       >
         <pre className="language-typescript line-numbers">
           <code ref={codeRef} className="language-typescript">
-            {yourCode}
+            {/* {yourCode} */}
+            {`import React, { useState, useEffect } from 'react';
+
+interface Props {
+  message: string;
+  isVisible?: boolean;
+}
+
+const MyComponent: React.FC<Props> = ({ message, isVisible = true }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log('Component mounted');
+  }, []);
+
+  const handleClick = () => {
+    setCount(prev => prev + 1);
+  };
+
+  if (!isVisible) {
+    return null;
+  }
+
+  return (
+    <div className="component-container">
+      <h2>{message}</h2>
+      <p>Count: {count}</p>
+      <button onClick={handleClick}>
+        Increment
+      </button>
+    </div>
+  );
+};
+
+export default MyComponent;`}
           </code>
         </pre>
       </div>

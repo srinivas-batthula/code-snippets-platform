@@ -1,11 +1,12 @@
+export const jsxCodeSample = 
+`
 "use client"
 
-import { jsxCodeSample } from "@/codeSamples/jsx";
 import PrismHighlighter from "@/components/PrismHighlighter";
 import { useEffect, useState } from "react";
 
 const SimpleHighlighterExample = () => {
-  const simpleCode = `
+  const simpleCode = \`
 
   
   // Simple JavaScript function
@@ -17,7 +18,7 @@ const message = greet("World");
 console.log(message);
 
 
-`;
+\`;
 
  const [mounted, setMounted] = useState(false);
   const [prismReady, setPrismReady] = useState(false);
@@ -66,18 +67,22 @@ console.log(message);
   }
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4 max-w-2xl mx-auto">
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
         Simple Highlighter (No Copy Button)
       </h2>
       <PrismHighlighter
-        code={jsxCodeSample}
+        code={simpleCode}
         language="jsx"
         showLineNumbers={true}
       />
     </div>
+    \`hello coders \`
   );
 };
 
 export default SimpleHighlighterExample;
 
+
+
+`
