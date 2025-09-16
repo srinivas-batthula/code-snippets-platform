@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import PrismHighlighter from "@/components/PrismHighlighter";
+//test page for prism highlighter
 
 const TestPage = () => {
   // const [mounted, setMounted] = useState(false);

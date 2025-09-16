@@ -17,3 +17,4 @@ out
 .vscode-test/
 *.vsix
 vsc-extension-quickstart.md
+/web/src/app/(pages)/test
