@@ -21,6 +21,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.css"
         />
+        <style>{`
+          /* Fix background color conflicts */
+          pre[class*="language-"] {
+            margin: 0 !important;
+            border-radius: 0.5rem;
+          }
+          code[class*="language-"] {
+            background: none !important;
+          }
+        `}</style>
       </head>
       <body className={`${inter.className}`}>
         {/* Wrap the 'whole App' in 'Providers', So 'NextAuth Session' is available 'globally'... */}

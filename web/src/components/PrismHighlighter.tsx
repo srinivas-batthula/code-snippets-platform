@@ -49,7 +49,7 @@ const PrismHighlighter: React.FC<PrismHighlighterProps> = ({
     `language-${language} ${lineNumberClass} ${className}`.trim();
 
   return (
-    <div className="relative bg-gray-800 rounded-lg overflow-hidden">
+    <div className="relative rounded-lg overflow-hidden">
       <pre className={combinedClassName}>
         <code ref={codeRef} className={`language-${language}`}>
           {code}
