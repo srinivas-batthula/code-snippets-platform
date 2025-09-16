@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import CodeBlock from "@/components/CodeBlock";
 import PrismHighlighter from "@/components/PrismHighlighter";
 
 const TestPage = () => {

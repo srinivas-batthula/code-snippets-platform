@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        {/* Prism.js CSS is now loaded dynamically via prism-config.ts */}
+        {/* Root layout kept simple - Prism.js CSS is in (pages)/layout.tsx */}
       </head>
       <body className={`${inter.className}`}>
         {/* Wrap the 'whole App' in 'Providers', So 'NextAuth Session' is available 'globally'... */}
