@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { initializePrism, loadLanguage, getPrism } from "@/lib/prism-config";
 
 // Types
 interface CodeBlockProps {
@@ -26,80 +27,27 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   const codeRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const loadPrism = async () => {
+    const setupPrismHighlighting = async () => {
       if (typeof window !== "undefined") {
         try {
-          const Prism = (await import("prismjs")).default;
+          // Initialize Prism globally (only happens once)
+          await initializePrism();
 
-          // Import specific language if not already loaded
-          if (!Prism.languages[language]) {
-            try {
-              switch (language) {
-                case "javascript":
-                  await import("prismjs/components/prism-javascript.js" as any);
-                  break;
-                case "typescript":
-                  await import("prismjs/components/prism-typescript.js" as any);
-                  break;
-                case "jsx":
-                  await import("prismjs/components/prism-jsx.js" as any);
-                  break;
-                case "tsx":
-                  await import("prismjs/components/prism-tsx.js" as any);
-                  break;
-                case "python":
-                  await import("prismjs/components/prism-python.js" as any);
-                  break;
-                case "java":
-                  await import("prismjs/components/prism-java.js" as any);
-                  break;
-                case "css":
-                  await import("prismjs/components/prism-css.js" as any);
-                  break;
-                case "scss":
-                  await import("prismjs/components/prism-scss.js" as any);
-                  break;
-                case "json":
-                  await import("prismjs/components/prism-json.js" as any);
-                  break;
-                case "bash":
-                  await import("prismjs/components/prism-bash.js" as any);
-                  break;
-                case "sql":
-                  await import("prismjs/components/prism-sql.js" as any);
-                  break;
-                case "html":
-                case "markup":
-                  await import("prismjs/components/prism-markup.js" as any);
-                  break;
-              }
-            } catch (error) {
-              console.warn(`Failed to load language ${language}:`, error);
-            }
-          }
+          // Load the specific language if needed
+          await loadLanguage(language);
 
-          // Import plugins if needed
-          if (showLineNumbers) {
-            try {
-              await import(
-                "prismjs/plugins/line-numbers/prism-line-numbers.js" as any
-              );
-            } catch (error) {
-              console.warn("Failed to load line numbers plugin:", error);
-            }
-          }
-
-          // Highlight this specific element
-          if (codeRef.current) {
+          // Get the Prism instance and highlight this specific element
+          const Prism = await getPrism();
+          if (Prism && codeRef.current) {
             Prism.highlightElement(codeRef.current);
           }
         } catch (error) {
-          console.error("Failed to load Prism:", error);
+          console.error("Failed to setup Prism highlighting:", error);
         }
       }
     };
 
-    loadPrism();
+    setupPrismHighlighting();
   }, [code, language, showLineNumbers]);
 
   const handleCopy = async () => {
@@ -112,8 +60,10 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       setTimeout(async () => {
         if (typeof window !== "undefined" && codeRef.current) {
           try {
-            const Prism = (await import("prismjs")).default;
-            Prism.highlightElement(codeRef.current);
+            const Prism = await getPrism();
+            if (Prism) {
+              Prism.highlightElement(codeRef.current);
+            }
           } catch (error) {
             console.error("Failed to re-highlight after copy:", error);
           }
