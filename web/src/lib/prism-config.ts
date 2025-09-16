@@ -22,22 +22,8 @@ export const initializePrism = (): Promise<void> => {
         }
 
         try {
-            // Load CSS themes once
-            if (!document.querySelector('link[href*="prism-tomorrow.css"]')) {
-                const themeLink = document.createElement("link");
-                themeLink.rel = "stylesheet";
-                themeLink.href =
-                    "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.css";
-                document.head.appendChild(themeLink);
-            }
-
-            if (!document.querySelector('link[href*="line-numbers.css"]')) {
-                const lineNumbersLink = document.createElement("link");
-                lineNumbersLink.rel = "stylesheet";
-                lineNumbersLink.href =
-                    "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.css";
-                document.head.appendChild(lineNumbersLink);
-            }
+            // CSS is now preloaded in layout.tsx, so we skip dynamic loading
+            // This prevents FOUC (Flash of Unstyled Content) on page refresh
 
             // Load core Prism
             const Prism = (await import("prismjs")).default;

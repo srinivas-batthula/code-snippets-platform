@@ -11,6 +11,17 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* Preload Prism CSS to prevent FOUC on refresh */}
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.css"
+        />
+      </head>
       <body className={`${inter.className}`}>
         {/* Wrap the 'whole App' in 'Providers', So 'NextAuth Session' is available 'globally'... */}
         <Providers>
