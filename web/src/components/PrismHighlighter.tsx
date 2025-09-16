@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { initializePrism, loadLanguage, getPrism } from "@/lib/prism-config";
+import { Copy, Check } from "lucide-react";
 
 interface PrismHighlighterProps {
   code: string;
   language: string;
   showLineNumbers?: boolean;
+  showCopyButton?: boolean;
   className?: string;
 }
 
@@ -14,9 +16,35 @@ const PrismHighlighter: React.FC<PrismHighlighterProps> = ({
   code,
   language,
   showLineNumbers = false,
+  showCopyButton = true,
   className = "",
 }) => {
   const codeRef = useRef<HTMLElement>(null);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = code;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      } catch (fallbackError) {
+        console.error("Fallback copy failed:", fallbackError);
+      }
+      document.body.removeChild(textArea);
+    }
+  };
 
   useEffect(() => {
     const setupPrismHighlighting = async () => {
@@ -49,7 +77,25 @@ const PrismHighlighter: React.FC<PrismHighlighterProps> = ({
     `language-${language} ${lineNumberClass} ${className}`.trim();
 
   return (
-    <div className="relative rounded-lg overflow-hidden">
+    <div className="relative rounded-lg overflow-hidden group">
+      {/* Copy Button */}
+      {showCopyButton && (
+        <button
+          onClick={handleCopyToClipboard}
+          className="absolute top-3 right-3 z-10 p-2 rounded-md bg-gray-800/80 hover:bg-gray-700/90 border border-gray-600/50 hover:border-gray-500/70 transition-all duration-200 opacity-100 group-hover:opacity-100 focus:opacity-100 focus:outline-none"
+          title={isCopied ? "Copied!" : "Copy to clipboard"}
+          aria-label={
+            isCopied ? "Copied to clipboard" : "Copy code to clipboard"
+          }
+        >
+          {isCopied ? (
+            <Check size={14} className=" text-gray-300" />
+          ) : (
+            <Copy size={14} className=" text-gray-300 hover:text-white" />
+          )}
+        </button>
+      )}
+
       <pre className={combinedClassName}>
         <code ref={codeRef} className={`language-${language}`}>
           {code}
