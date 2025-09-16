@@ -22,8 +22,7 @@ export const initializePrism = (): Promise<void> => {
         }
 
         try {
-            // CSS is now preloaded in layout.tsx, so we skip dynamic loading
-            // This prevents FOUC (Flash of Unstyled Content) on page refresh
+            // CSS is now preloaded in layout.tsx to prevent FOUC on refresh
 
             // Load core Prism
             const Prism = (await import("prismjs")).default;
