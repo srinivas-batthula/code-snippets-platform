@@ -1,0 +1,92 @@
+/* Custom Prism.js styles */
+
+/* Override default Prism theme */
+.code-block-container {
+  font-family: "Fira Code", "Consolas", "Monaco", "Courier New", monospace;
+}
+
+/* Custom highlighted lines */
+.highlighted-line {
+  display: block;
+  background-color: rgba(255, 255, 0, 0.1);
+  border-left: 3px solid #fbbf24;
+  padding-left: 0.5rem;
+  margin-left: -0.5rem;
+}
+
+/* Dark mode highlighted lines */
+.dark .highlighted-line {
+  background-color: rgba(255, 255, 0, 0.05);
+  border-left-color: #f59e0b;
+}
+
+/* Custom line numbers styling */
+.line-numbers .line-numbers-rows {
+  border-right: 1px solid #e5e7eb;
+  padding-right: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.dark .line-numbers .line-numbers-rows {
+  border-right-color: #374151;
+}
+
+/* Scrollbar styling */
+.code-block-container pre::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.code-block-container pre::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.code-block-container pre::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.code-block-container pre::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark mode scrollbar */
+.dark .code-block-container pre::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark .code-block-container pre::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark .code-block-container pre::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Copy button animation */
+.copy-button {
+  transition: all 0.2s ease-in-out;
+  transform: scale(0.95);
+}
+
+.copy-button:hover {
+  transform: scale(1);
+}
+
+/* Language badge */
+.language-badge {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .code-block-container pre {
+    font-size: 0.875rem;
+  }
+
+  .line-numbers .line-numbers-rows {
+    display: none;
+  }
+}
