@@ -213,8 +213,8 @@ export default function CodeEditor(): JSX.Element {
   const languageOptions: LanguageOption[] = [
     { value: "javascript", label: "JavaScript" },
     { value: "typescript", label: "TypeScript" },
-    { value: "javascript", label: "JSX" },
-    { value: "typescript", label: "TSX" },
+    { value: "jsx", label: "JSX" },
+    { value: "tsx", label: "TSX" },
     { value: "python", label: "Python" },
     { value: "java", label: "Java" },
     { value: "csharp", label: "C#" },
@@ -243,6 +243,25 @@ export default function CodeEditor(): JSX.Element {
     return samples[lang] || "// Type your code here";
   };
 
+  // Map our custom language types to Monaco's supported languages
+  const getMonacoLanguage = (lang: SupportedLanguage): string => {
+    const languageMap: Record<SupportedLanguage, string> = {
+      javascript: "javascript",
+      typescript: "typescript",
+      jsx: "javascript",
+      tsx: "typescript",
+      python: "python",
+      java: "java",
+      csharp: "csharp",
+      cpp: "cpp",
+      html: "html",
+      css: "css",
+      json: "json",
+      markdown: "markdown",
+    };
+    return languageMap[lang] || "javascript";
+  };
+
   const handleLanguageChange = (newLanguage: SupportedLanguage): void => {
     setLanguage(newLanguage);
     setCode(getDefaultCode(newLanguage));
@@ -264,8 +283,8 @@ export default function CodeEditor(): JSX.Element {
             }
             className="px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            {languageOptions.map((option) => (
-              <option key={option.value} value={option.value}>
+            {languageOptions.map((option, index) => (
+              <option key={`${option.value}-${index}`} value={option.value}>
                 {option.label}
               </option>
             ))}
@@ -303,10 +322,10 @@ export default function CodeEditor(): JSX.Element {
       <div className="border border-gray-700 rounded-lg overflow-hidden">
         <Editor
           height="600px"
-          language={language}
+          language={getMonacoLanguage(language)}
           value={code}
           onChange={handleEditorChange}
-          theme="myTheme"
+          theme="prismTheme"
           options={{
             fontSize: fontSize,
             fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
