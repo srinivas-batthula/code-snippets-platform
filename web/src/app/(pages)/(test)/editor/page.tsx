@@ -1,43 +1,44 @@
 "use client";
 import { JSX, useEffect, useState } from "react";
-import Editor,{ useMonaco } from "@monaco-editor/react";
+import Editor, { useMonaco } from "@monaco-editor/react";
 
 interface LanguageOption {
   value: string;
   label: string;
 }
 
-type SupportedLanguage = 
-  | "javascript" 
-  | "typescript" 
+type SupportedLanguage =
+  | "javascript"
+  | "typescript"
   | "tsx"
   | "jsx"
-  | "python" 
-  | "java" 
-  | "csharp" 
-  | "cpp" 
-  | "html" 
-  | "css" 
-  | "json" 
+  | "python"
+  | "java"
+  | "csharp"
+  | "cpp"
+  | "html"
+  | "css"
+  | "json"
   | "markdown";
 
 export default function CodeEditor(): JSX.Element {
   const monaco = useMonaco();
   const [language, setLanguage] = useState<SupportedLanguage>("javascript");
-  const [code, setCode] = useState<string>("// Type your code here\nconst greeting = 'Hello World!';\nconsole.log(greeting);");
+  const [code, setCode] = useState<string>(
+    "// Type your code here\nconst greeting = 'Hello World!';\nconsole.log(greeting);",
+  );
   const [fontSize, setFontSize] = useState<number>(14);
-  
-  
+
   useEffect(() => {
     if (monaco) {
-
-       monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
         jsx: monaco.languages.typescript.JsxEmit.ReactJSX,
         target: monaco.languages.typescript.ScriptTarget.ESNext,
         allowNonTsExtensions: true,
         allowJs: true,
         module: monaco.languages.typescript.ModuleKind.ESNext,
-        moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        moduleResolution:
+          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
         allowSyntheticDefaultImports: true,
         esModuleInterop: true,
         strict: false,
@@ -51,7 +52,8 @@ export default function CodeEditor(): JSX.Element {
         allowNonTsExtensions: true,
         allowJs: true,
         module: monaco.languages.typescript.ModuleKind.ESNext,
-        moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        moduleResolution:
+          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
         allowSyntheticDefaultImports: true,
         esModuleInterop: true,
       });
@@ -99,44 +101,109 @@ export default function CodeEditor(): JSX.Element {
 
       monaco.languages.typescript.typescriptDefaults.addExtraLib(
         reactTypes,
-        'ts:react.d.ts'
+        "ts:react.d.ts",
       );
 
       monaco.languages.typescript.javascriptDefaults.addExtraLib(
         reactTypes,
-        'ts:react.d.ts'
+        "ts:react.d.ts",
       );
 
-       monaco.editor.defineTheme("myTheme", {
+      monaco.editor.defineTheme("prismTheme", {
         base: "vs-dark",
         inherit: true,
         rules: [
-          { token: "keyword", foreground: "C678DD" },
-          { token: "string", foreground: "98C379" },
-          { token: "number", foreground: "D19A66" },
-          { token: "type", foreground: "61DAFB" },
-          { token: "identifier", foreground: "E06C75" },
+          // Comments
+          { token: "comment", foreground: "7f848e", fontStyle: "italic" },
+          { token: "comment.block", foreground: "7f848e", fontStyle: "italic" },
+          { token: "comment.line", foreground: "7f848e", fontStyle: "italic" },
+
+          // Keywords
+          { token: "keyword", foreground: "c678dd" },
+          { token: "keyword.control", foreground: "c678dd" },
+          { token: "keyword.operator", foreground: "56b6c2" },
+
+          // Strings
+          { token: "string", foreground: "98c379" },
+          { token: "string.quoted", foreground: "98c379" },
+          { token: "string.template", foreground: "98c379" },
+
+          // Numbers and constants
+          { token: "number", foreground: "d19a66" },
+          { token: "constant", foreground: "d19a66" },
+          { token: "constant.numeric", foreground: "d19a66" },
+          { token: "constant.language.boolean", foreground: "d19a66" },
+
+          // Functions
+          { token: "function", foreground: "61afef" },
+          { token: "entity.name.function", foreground: "61afef" },
+          { token: "support.function", foreground: "61afef" },
+
+          // Variables and identifiers
+          { token: "variable", foreground: "e06c75" },
+          { token: "identifier", foreground: "e06c75" },
+          { token: "entity.name.variable", foreground: "e06c75" },
+
+          // Types and classes
+          { token: "type", foreground: "e5c07b" },
+          { token: "entity.name.type", foreground: "e5c07b" },
+          { token: "entity.name.class", foreground: "e5c07b" },
+          { token: "support.class", foreground: "e5c07b" },
+
+          // Properties and attributes
+          { token: "property", foreground: "d19a66" },
+          { token: "entity.name.tag", foreground: "e06c75" },
+          { token: "entity.other.attribute-name", foreground: "d19a66" },
+
+          // Operators
+          { token: "operator", foreground: "56b6c2" },
+          { token: "punctuation", foreground: "abb2bf" },
+
+          // Regular expressions
+          { token: "regexp", foreground: "e06c75" },
+
+          // JSX/TSX specific
+          { token: "tag", foreground: "e06c75" },
+          { token: "tag.name", foreground: "e06c75" },
+          { token: "attribute.name", foreground: "d19a66" },
+          { token: "attribute.value", foreground: "98c379" },
+
+          // Markdown specific
+          { token: "markup.heading", foreground: "e06c75" },
+          { token: "markup.bold", foreground: "d19a66", fontStyle: "bold" },
+          { token: "markup.italic", foreground: "c678dd", fontStyle: "italic" },
+          { token: "markup.quote", foreground: "7f848e", fontStyle: "italic" },
+          { token: "markup.underline.link", foreground: "61afef" },
         ],
         colors: {
-          "editor.background": "#16191D",
-          "editorLineNumber.foreground": "#ABB2BF",
-          "editor.foreground": "#ABB2BF",
+          "editor.background": "#16191d",
+          "editor.foreground": "#abb2bf",
+          "editorLineNumber.foreground": "#636d83",
+          "editorLineNumber.activeForeground": "#abb2bf",
+          "editor.selectionBackground": "#67769660",
+          "editor.selectionHighlightBackground": "#67769630",
+          "editor.findMatchBackground": "#67769660",
+          "editor.findMatchHighlightBackground": "#67769630",
+          "editorCursor.foreground": "#abb2bf",
+          "editor.lineHighlightBackground": "#1e2227",
+          "editorIndentGuide.background": "#3c3f43",
+          "editorIndentGuide.activeBackground": "#636d83",
+          "editorBracketMatch.background": "#67769660",
+          "editorBracketMatch.border": "#677696",
         },
       });
 
       // Set the theme
-      monaco.editor.setTheme("myTheme");
+      monaco.editor.setTheme("prismTheme");
     }
-
-
   }, [monaco]);
 
   const increaseFontSize = (): void => {
-    setFontSize(prev => Math.min(prev + 2, 32));
+    setFontSize((prev) => Math.min(prev + 2, 32));
   };
 
   const decreaseFontSize = (): void => {
-    setFontSize(prev => Math.max(prev - 2, 8));
+    setFontSize((prev) => Math.max(prev - 2, 8));
   };
 
   const resetFontSize = (): void => {
@@ -155,7 +222,7 @@ export default function CodeEditor(): JSX.Element {
     { value: "html", label: "HTML" },
     { value: "css", label: "CSS" },
     { value: "json", label: "JSON" },
-    { value: "markdown", label: "Markdown" }
+    { value: "markdown", label: "Markdown" },
   ];
 
   const getDefaultCode = (lang: SupportedLanguage): string => {
@@ -171,7 +238,7 @@ export default function CodeEditor(): JSX.Element {
       html: `<!-- HTML Example -->\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>`,
       css: `/* CSS Example */\nbody {\n    font-family: Arial, sans-serif;\n    background-color: #16191d;\n    color: #abb2bf;\n}\n\nh1 {\n    color: #61afef;\n}`,
       json: `{\n  "name": "example",\n  "version": "1.0.0",\n  "description": "A sample JSON file",\n  "keywords": ["json", "example"],\n  "author": "Developer"\n}`,
-      markdown: `# Markdown Example\n\nThis is a **bold** text and this is *italic*.\n\n## Code Block\n\n\`\`\`javascript\nconsole.log('Hello World!');\n\`\`\`\n\n- List item 1\n- List item 2`
+      markdown: `# Markdown Example\n\nThis is a **bold** text and this is *italic*.\n\n## Code Block\n\n\`\`\`javascript\nconsole.log('Hello World!');\n\`\`\`\n\n- List item 1\n- List item 2`,
     };
     return samples[lang] || "// Type your code here";
   };
@@ -192,7 +259,9 @@ export default function CodeEditor(): JSX.Element {
           <label className="text-white font-medium">Language:</label>
           <select
             value={language}
-            onChange={(e) => handleLanguageChange(e.target.value as SupportedLanguage)}
+            onChange={(e) =>
+              handleLanguageChange(e.target.value as SupportedLanguage)
+            }
             className="px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {languageOptions.map((option) => (
@@ -202,7 +271,7 @@ export default function CodeEditor(): JSX.Element {
             ))}
           </select>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <span className="text-white font-medium">Font Size:</span>
           <button
@@ -246,15 +315,15 @@ export default function CodeEditor(): JSX.Element {
             automaticLayout: true,
             tabSize: 4,
             insertSpaces: true,
-            wordWrap: 'on',
-            lineNumbers: 'on',
-            renderWhitespace: 'selection',
-            cursorBlinking: 'smooth',
+            wordWrap: "on",
+            lineNumbers: "on",
+            renderWhitespace: "selection",
+            cursorBlinking: "smooth",
             cursorSmoothCaretAnimation: "on",
             smoothScrolling: true,
             suggest: {
-              snippetsPreventQuickSuggestions:false
-            }
+              snippetsPreventQuickSuggestions: false,
+            },
           }}
         />
       </div>
