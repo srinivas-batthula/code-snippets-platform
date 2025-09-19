@@ -55,17 +55,19 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between",
+            "w-full justify-between text-left",
             !selectedOption && "text-muted-foreground",
             className,
           )}
           disabled={disabled}
         >
-          {selectedOption ? selectedOption.label : placeholder}
+          <span className="truncate">
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
+      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
         <Command>
           <CommandInput placeholder={searchPlaceholder} className="h-9" />
           <CommandList>
@@ -80,11 +82,12 @@ export function Combobox({
                     onValueChange?.(newValue);
                     setOpen(false);
                   }}
+                  className="justify-between"
                 >
-                  {option.label}
+                  <span className="truncate">{option.label}</span>
                   <Check
                     className={cn(
-                      "ml-auto h-4 w-4",
+                      "ml-2 h-4 w-4 shrink-0",
                       value === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />

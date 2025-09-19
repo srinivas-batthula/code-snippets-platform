@@ -17,7 +17,6 @@ import type { ComboboxOption } from "./ui/combobox";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -49,6 +48,7 @@ export default function CodeEditor({
 }: CodeEditorProps) {
   const [fontSize, setFontSize] = useState<number>(14);
   const [tagInput, setTagInput] = useState<string>("");
+  const [isDefaultCode, setIsDefaultCode] = useState<boolean>(true); // Track if current code is default
 
   // Helper function to get default code for a language
   const getDefaultCode = (lang: SupportedLanguage): string => {
@@ -79,6 +79,15 @@ export default function CodeEditor({
       language: initialData?.language || "javascript",
     },
   });
+
+  // Set initial default code flag
+  React.useEffect(() => {
+    if (!initialData?.code) {
+      setIsDefaultCode(true);
+    } else {
+      setIsDefaultCode(false);
+    }
+  }, [initialData?.code]);
 
   const languageOptions: ComboboxOption[] = [
     { value: "javascript", label: "JavaScript" },
@@ -160,15 +169,28 @@ export default function CodeEditor({
 
   // Handle language change to load default code
   const handleLanguageChange = (newLanguage: SupportedLanguage) => {
-    const currentCode = form.getValues("code");
-
-    // If the current code is empty or appears to be a default sample, load the new default code
-    if (currentCode === "" || currentCode === "// Type your code here") {
-      const newCode = getDefaultCode(newLanguage);
-      form.setValue("code", newCode, { shouldValidate: true });
-    }
+    // Always load new default code when language changes
+    // This ensures the code sample updates immediately
+    const newCode = getDefaultCode(newLanguage);
+    form.setValue("code", newCode, { shouldValidate: true });
+    setIsDefaultCode(true);
   };
 
+  // Handle code changes from Monaco Editor
+  const handleCodeChange = (newCode: string) => {
+    // Check if the new code is different from the current default for this language
+    const currentLanguage = form.getValues("language");
+    const defaultCode = getDefaultCode(currentLanguage);
+
+    // If code is different from default and not empty, mark as custom
+    if (newCode !== defaultCode && newCode.trim() !== "") {
+      setIsDefaultCode(false);
+    } else if (newCode === defaultCode) {
+      setIsDefaultCode(true);
+    }
+
+    return newCode;
+  };
   return (
     <div className={`space-y-6 ${className}`}>
       <Form {...form}>
@@ -176,194 +198,158 @@ export default function CodeEditor({
           onSubmit={form.handleSubmit(handleFormSubmit)}
           className="space-y-6"
         >
-          {/* Title Field */}
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter snippet title..."
-                    {...field}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Give your code snippet a descriptive title
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column - Form Fields */}
+            <div className="space-y-6">
+              {/* Title Field */}
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter snippet title..."
+                        {...field}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* Description Field */}
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <textarea
-                    placeholder="Describe what this code snippet does..."
-                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    {...field}
-                    disabled={isLoading}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Explain the purpose and functionality of your code snippet
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              {/* Description Field */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <textarea
+                      rows={4}
+                      
+                        placeholder="Describe what this code snippet does..."
+                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        {...field}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          {/* Language Selection */}
-          <FormField
-            control={form.control}
-            name="language"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Programming Language</FormLabel>
-                <FormControl>
-                  <Combobox
-                    options={languageOptions}
-                    value={field.value}
-                    onValueChange={(value: string) => {
-                      const newLanguage = value as SupportedLanguage;
-                      field.onChange(value);
-                      handleLanguageChange(newLanguage);
-                    }}
-                    placeholder="Select programming language..."
-                    searchPlaceholder="Search languages..."
-                    disabled={isLoading}
-                    className="w-full"
-                  />
-                </FormControl>
-                <FormDescription>
-                  Select the programming language for syntax highlighting
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              {/* Language Selection and Font Size Row */}
+             
 
-          {/* Font Size Controls */}
-          <div className="space-y-2">
-            <FormLabel>Font Size</FormLabel>
-            <Select
-              value={fontSize.toString()}
-              onValueChange={(value) => setFontSize(Number(value))}
-              disabled={isLoading}
-            >
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {fontSizeOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-sm text-muted-foreground">
-              Adjust the font size for better code readability
-            </p>
-          </div>
-
-          {/* Tags Field */}
-          <FormField
-            control={form.control}
-            name="tags"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tags</FormLabel>
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Add a tag..."
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={handleTagInputKeyDown}
-                      disabled={isLoading}
-                      className="flex-1"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={addTag}
-                      disabled={isLoading || !tagInput.trim()}
-                    >
-                      Add
-                    </Button>
-                  </div>
-                  {field.value.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {field.value.map((tag, index) => (
-                        <span
-                          key={`${tag}-${index}`}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm"
+              {/* Tags Field */}
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add a tag..."
+                          value={tagInput}
+                          onChange={(e) => setTagInput(e.target.value)}
+                          onKeyDown={handleTagInputKeyDown}
+                          disabled={isLoading}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="default"
+                          onClick={addTag}
+                          disabled={isLoading || !tagInput.trim()}
                         >
-                          {tag}
-                          <button
-                            type="button"
-                            onClick={() => removeTag(tag)}
-                            disabled={isLoading}
-                            className="text-secondary-foreground/60 hover:text-secondary-foreground"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
+                          Add
+                        </Button>
+                      </div>
+                      {field.value.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {field.value.map((tag, index) => (
+                            <span
+                              key={`${tag}-${index}`}
+                              className="inline-flex items-center gap-1 px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm"
+                            >
+                              {tag}
+                              <button
+                                type="button"
+                                onClick={() => removeTag(tag)}
+                                disabled={isLoading}
+                                className="text-secondary-foreground/60 hover:text-secondary-foreground"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
+                <FormField
+                  control={form.control}
+                  name="language"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Programming Language</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={languageOptions}
+                          value={field.value}
+                          onValueChange={(value: string) => {
+                            const newLanguage = value as SupportedLanguage;
+                            field.onChange(value);
+                            handleLanguageChange(newLanguage);
+                          }}
+                          placeholder="Select programming language..."
+                          searchPlaceholder="Search languages..."
+                          disabled={isLoading}
+                          className="w-full"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
+                />
+
+                {/* Font Size Controls */}
+                <div className="space-y-2">
+                    <div className="flex flex-col gap-2"> 
+
+                  <FormLabel>Font Size</FormLabel>
+                  <Select
+                    value={fontSize.toString()}
+                    onValueChange={(value) => setFontSize(Number(value))}
+                    disabled={isLoading}
+                    >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fontSizeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                      </div>
                 </div>
-                <FormDescription>
-                  Add tags to categorize and make your snippet easier to find
-                  (max 10)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Code Field with Monaco Editor */}
-          <FormField
-            control={form.control}
-            name="code"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Code</FormLabel>
-                <FormControl>
-                  <div className="border border-input rounded-md overflow-hidden">
-                    <MonacoEditor
-                      initialLanguage={form.watch("language")}
-                      initialCode={field.value || undefined}
-                      initialFontSize={fontSize}
-                      height="400px"
-                      showLanguageSelector={false}
-                      showFontControls={false}
-                      onCodeChange={field.onChange}
-                      readOnly={isLoading}
-                      className="border-0 bg-transparent"
-                    />
-                  </div>
-                </FormControl>
-                <FormDescription>
-                  Write or paste your code snippet here
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Submit Button */}
-          <div className="flex justify-end space-x-2">
+                
+              </div>
+              <div className="flex justify-end space-x-2">
             <Button
               type="button"
               variant="outline"
@@ -376,6 +362,43 @@ export default function CodeEditor({
               {isLoading ? "Saving..." : "Save Snippet"}
             </Button>
           </div>
+              
+            </div>
+
+            {/* Right Column - Code Editor */}
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="border border-input rounded-md overflow-hidden">
+                        <MonacoEditor
+                          initialLanguage={form.watch("language")}
+                          initialCode={field.value || undefined}
+                          initialFontSize={fontSize}
+                          height="500px"
+                          showLanguageSelector={false}
+                          showFontControls={false}
+                          onCodeChange={(newCode: string) => {
+                            handleCodeChange(newCode);
+                            field.onChange(newCode);
+                          }}
+                          readOnly={isLoading}
+                          className="border-0 bg-transparent"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          
         </form>
       </Form>
     </div>
