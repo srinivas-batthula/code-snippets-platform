@@ -1,25 +1,12 @@
 "use client";
 import { JSX, useEffect, useState } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
+import { type SupportedLanguage } from "@/schemas/codeEditorFormSchema";
 
 interface LanguageOption {
   value: SupportedLanguage;
   label: string;
 }
-
-export type SupportedLanguage =
-  | "javascript"
-  | "typescript"
-  | "tsx"
-  | "jsx"
-  | "python"
-  | "java"
-  | "csharp"
-  | "cpp"
-  | "html"
-  | "css"
-  | "json"
-  | "markdown";
 
 export interface MonacoEditorProps {
   /** Initial language for the editor */
@@ -51,8 +38,8 @@ export default function MonacoEditor({
   initialCode,
   initialFontSize = 14,
   height = "600px",
-  showLanguageSelector = true,
-  showFontControls = true,
+  showLanguageSelector = false,
+  showFontControls = false,
   themeName = "prismTheme",
   onCodeChange,
   onLanguageChange,
@@ -100,10 +87,54 @@ export default function MonacoEditor({
   // State
   const monaco = useMonaco();
   const [language, setLanguage] = useState<SupportedLanguage>(initialLanguage);
-  const [code, setCode] = useState<string>(
-    initialCode || getDefaultCode(initialLanguage),
-  );
+  const [code, setCode] = useState<string>(() => {
+    if (initialCode && initialCode.trim() !== "") {
+      return initialCode;
+    }
+    return getDefaultCode(initialLanguage);
+  });
   const [fontSize, setFontSize] = useState<number>(initialFontSize);
+
+  // Update language when initialLanguage prop changes
+  useEffect(() => {
+    if (initialLanguage !== language) {
+      setLanguage(initialLanguage);
+      // If no initial code was provided or it's empty, load default code for the new language
+      if (!initialCode || initialCode.trim() === "") {
+        const newCode = getDefaultCode(initialLanguage);
+        setCode(newCode);
+        onCodeChange?.(newCode);
+      }
+    }
+  }, [initialLanguage, initialCode, onCodeChange]);
+
+  // Update fontSize when initialFontSize prop changes
+  useEffect(() => {
+    if (initialFontSize !== fontSize) {
+      setFontSize(initialFontSize);
+    }
+  }, [initialFontSize]);
+
+  // Update code when initialCode prop changes
+  useEffect(() => {
+    if (initialCode !== undefined && initialCode !== code) {
+      if (initialCode.trim() === "") {
+        // If empty string, load default code for current language
+        const newCode = getDefaultCode(language);
+        setCode(newCode);
+        onCodeChange?.(newCode);
+      } else {
+        setCode(initialCode);
+      }
+    }
+  }, [initialCode, language, onCodeChange]);
+
+  // Initial setup - call onCodeChange with initial code on mount
+  useEffect(() => {
+    if (code && onCodeChange) {
+      onCodeChange(code);
+    }
+  }, []); // Only run on mount
 
   useEffect(() => {
     if (monaco) {
@@ -316,20 +347,20 @@ export default function MonacoEditor({
   };
 
   return (
-    <div
-      className={`flex flex-col gap-4 p-4 bg-gray-900 min-h-screen ${className}`}
-    >
+    <div className={`flex flex-col ${className}`}>
       {(showLanguageSelector || showFontControls) && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between p-4 bg-card border-b border-border">
           {showLanguageSelector && (
             <div className="flex items-center gap-4">
-              <label className="text-white font-medium">Language:</label>
+              <label className="text-card-foreground font-medium">
+                Language:
+              </label>
               <select
                 value={language}
                 onChange={(e) =>
                   handleLanguageChange(e.target.value as SupportedLanguage)
                 }
-                className="px-3 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-2 bg-input text-foreground border border-border rounded-md focus:ring-2 focus:ring-ring focus:border-ring"
               >
                 {languageOptions.map((option, index) => (
                   <option key={`${option.value}-${index}`} value={option.value}>
@@ -342,27 +373,29 @@ export default function MonacoEditor({
 
           {showFontControls && (
             <div className="flex items-center gap-3">
-              <span className="text-white font-medium">Font Size:</span>
+              <span className="text-card-foreground font-medium">
+                Font Size:
+              </span>
               <button
                 onClick={decreaseFontSize}
-                className="px-3 py-1 bg-gray-800 text-white border border-gray-700 rounded-md hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 bg-secondary text-secondary-foreground border border-border rounded-md hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={fontSize <= 8}
               >
                 A-
               </button>
-              <span className="text-white bg-gray-800 px-3 py-1 rounded border border-gray-700 min-w-[3rem] text-center">
+              <span className="text-card-foreground bg-secondary px-3 py-1 rounded border border-border min-w-[3rem] text-center">
                 {fontSize}
               </span>
               <button
                 onClick={increaseFontSize}
-                className="px-3 py-1 bg-gray-800 text-white border border-gray-700 rounded-md hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 bg-secondary text-secondary-foreground border border-border rounded-md hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={fontSize >= 32}
               >
                 A+
               </button>
               <button
                 onClick={resetFontSize}
-                className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                className="px-3 py-1 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
               >
                 Reset
               </button>
@@ -371,7 +404,7 @@ export default function MonacoEditor({
         </div>
       )}
 
-      <div className="border border-gray-700 rounded-lg overflow-hidden">
+      <div className="border-border rounded-lg overflow-hidden flex-1">
         <Editor
           height={height}
           language={getMonacoLanguage(language)}
@@ -396,7 +429,6 @@ export default function MonacoEditor({
             suggest: {
               snippetsPreventQuickSuggestions: false,
             },
-            
           }}
         />
       </div>

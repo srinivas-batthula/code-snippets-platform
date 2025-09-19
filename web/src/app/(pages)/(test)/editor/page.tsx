@@ -1,6 +1,7 @@
 "use client";
 
-import MonacoEditor, { SupportedLanguage } from "@/components/MonacoEditor";
+import CodeEditor from "@/components/CodeEditor";
+import { type SupportedLanguage } from "@/schemas/codeEditorFormSchema";
 import React, { useState } from "react";
 
 const EditorPage = () => {
@@ -17,18 +18,14 @@ const EditorPage = () => {
     console.log("Language changed:", newLanguage);
   };
 
+  const handleFormSubmit = (data: any) => {
+    console.log("Form submitted:", data);
+  };
+
   return (
-    <div>
-      <MonacoEditor
-        initialLanguage="typescript"
-        // initialCode="// Welcome to the Monaco Editor!\nconsole.log('Hello, TypeScript!');"
-        height="500px"
-        onCodeChange={handleCodeChange}
-        onLanguageChange={handleLanguageChange}
-        showLanguageSelector={true}
-        showFontControls={false}
-        readOnly={false}
-      />
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Code Editor Test</h1>
+      <CodeEditor onSubmit={handleFormSubmit} />
     </div>
   );
 };
