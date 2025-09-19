@@ -411,6 +411,7 @@ export default function MonacoEditor({
           value={code}
           onChange={handleEditorChange}
           theme={themeName}
+          className=""
           options={{
             fontSize: fontSize,
             fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
@@ -425,6 +426,7 @@ export default function MonacoEditor({
             cursorBlinking: "smooth",
             cursorSmoothCaretAnimation: "on",
             smoothScrolling: true,
+            padding: { top: 16, bottom: 10 },
             readOnly: readOnly,
             suggest: {
               snippetsPreventQuickSuggestions: false,

@@ -198,10 +198,60 @@ export default function CodeEditor({
           onSubmit={form.handleSubmit(handleFormSubmit)}
           className="space-y-6"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Column - Form Fields */}
-            <div className="space-y-6">
+            <div className="space-y-6 max-w-md w-full">
               {/* Title Field */}
+              <div className="flex flex-row gap-4 w-full ">
+                <FormField
+                  control={form.control}
+                  name="language"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Programming Language</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={languageOptions}
+                          value={field.value}
+                          onValueChange={(value: string) => {
+                            const newLanguage = value as SupportedLanguage;
+                            field.onChange(value);
+                            handleLanguageChange(newLanguage);
+                          }}
+                          placeholder="Select programming language..."
+                          searchPlaceholder="Search languages..."
+                          disabled={isLoading}
+                          className="w-full"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Font Size Controls */}
+                <div className="space-y-2">
+                  <div className="flex flex-col gap-2">
+                    <FormLabel>Font Size</FormLabel>
+                    <Select
+                      value={fontSize.toString()}
+                      onValueChange={(value) => setFontSize(Number(value))}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger className="w-fit">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fontSizeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
               <FormField
                 control={form.control}
                 name="title"
@@ -229,8 +279,7 @@ export default function CodeEditor({
                     <FormLabel>Description</FormLabel>
                     <FormControl>
                       <textarea
-                      rows={4}
-                      
+                        rows={4}
                         placeholder="Describe what this code snippet does..."
                         className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         {...field}
@@ -243,7 +292,6 @@ export default function CodeEditor({
               />
 
               {/* Language Selection and Font Size Row */}
-             
 
               {/* Tags Field */}
               <FormField
@@ -297,76 +345,25 @@ export default function CodeEditor({
                   </FormItem>
                 )}
               />
-               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
-                <FormField
-                  control={form.control}
-                  name="language"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Programming Language</FormLabel>
-                      <FormControl>
-                        <Combobox
-                          options={languageOptions}
-                          value={field.value}
-                          onValueChange={(value: string) => {
-                            const newLanguage = value as SupportedLanguage;
-                            field.onChange(value);
-                            handleLanguageChange(newLanguage);
-                          }}
-                          placeholder="Select programming language..."
-                          searchPlaceholder="Search languages..."
-                          disabled={isLoading}
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {/* Submit Button */}
 
-                {/* Font Size Controls */}
-                <div className="space-y-2">
-                    <div className="flex flex-col gap-2"> 
-
-                  <FormLabel>Font Size</FormLabel>
-                  <Select
-                    value={fontSize.toString()}
-                    onValueChange={(value) => setFontSize(Number(value))}
-                    disabled={isLoading}
-                    >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {fontSizeOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                      </div>
-                </div>
-                
+              <div className="flex justify-end space-x-2 ">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => form.reset()}
+                >
+                  Reset
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Saving..." : "Save Snippet"}
+                </Button>
               </div>
-              <div className="flex justify-end space-x-2">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isLoading}
-              onClick={() => form.reset()}
-            >
-              Reset
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save Snippet"}
-            </Button>
-          </div>
-              
             </div>
 
             {/* Right Column - Code Editor */}
-            <div className="space-y-4">
+            <div className="space-y-4 w-full ">
               <FormField
                 control={form.control}
                 name="code"
@@ -396,9 +393,6 @@ export default function CodeEditor({
               />
             </div>
           </div>
-
-          {/* Submit Button */}
-          
         </form>
       </Form>
     </div>
