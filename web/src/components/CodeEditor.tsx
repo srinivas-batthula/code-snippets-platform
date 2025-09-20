@@ -28,6 +28,7 @@ import {
   type CodeEditorFormData,
   type SupportedLanguage,
 } from "@/schemas/codeEditorFormSchema";
+import axios from "axios";
 
 interface CodeEditorProps {
   /** Initial form data */
@@ -122,8 +123,12 @@ export default function CodeEditor({
 
   const handleFormSubmit = async (data: CodeEditorFormData) => {
     try {
-      await onSubmit?.(data);
+      const response = await axios.post("/api/snippets/upload", data);
+
+      console.log("Form submitted:", data);
+      console.log("data:", response.data);
     } catch (error) {
+      // const axiosError = error as AxiosError<ApiResponse>;
       console.error("Error submitting form:", error);
     }
   };
