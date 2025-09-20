@@ -123,13 +123,17 @@ export default function CodeEditor({
 
   const handleFormSubmit = async (data: CodeEditorFormData) => {
     try {
-      const response = await axios.post("/api/snippets/upload", data);
+      console.log("Submitting form with data:", data);
+      const response = await axios.post("/api/snippets/web/upload", data);
 
-      console.log("Form submitted:", data);
-      console.log("data:", response.data);
+      console.log("Form submitted successfully:", data);
+      console.log("Server response:", response.data);
     } catch (error) {
-      // const axiosError = error as AxiosError<ApiResponse>;
       console.error("Error submitting form:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Response data:", error.response?.data);
+        console.error("Status:", error.response?.status);
+      }
     }
   };
 
