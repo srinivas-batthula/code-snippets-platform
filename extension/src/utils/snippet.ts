@@ -14,7 +14,7 @@ export async function uploadSnippet({ code, title, language, token }: {
     try {
         const fetch = (await import('node-fetch')).default; // dynamic import for node-fetch to support ESM/CJS interop
 
-        const resp = await fetch(`${API_BASE}/api/snippets/upload`, {
+        const resp = await fetch(`${API_BASE}/api/snippets/export`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

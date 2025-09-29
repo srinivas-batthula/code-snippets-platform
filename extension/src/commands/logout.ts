@@ -8,7 +8,8 @@ const SECRET_KEY = config.get<string>('secretKey')!;
 
 export function registerLogout(context: vscode.ExtensionContext) {
     const command = vscode.commands.registerCommand('codesnippets.logout', async () => {
-        await context.secrets.delete(SECRET_KEY);
+        await context.secrets.delete(SECRET_KEY);   // Delete `API-KEY` of the user...
+        await context.globalState.update('username', undefined);    // Also delete 'username' from state...
         log('Logged Out Successfully!', 'info');
     });
 

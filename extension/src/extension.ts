@@ -6,9 +6,6 @@ import { registerLogout } from './commands/logout';
 import { registerExportSnippet } from './commands/exportSnippet';
 import { registerImportSnippet } from './commands/importSnippet';
 import uriHandler from './utils/handle_Uris';
-import * as dotenv from 'dotenv';
-dotenv.config();
-
 
 // Central place to register all commands...
 // This `extension.ts` is called to activate / deactivate the extension...

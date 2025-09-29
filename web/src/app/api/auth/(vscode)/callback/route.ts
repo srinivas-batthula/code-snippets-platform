@@ -68,7 +68,7 @@ export async function GET(req: Request) {
 
         // connect to DB and `create` the 'user' If not there in DB...
         await connectDB();
-        let user = await User.findOne({ username: githubUsername });
+        let user = await User.findOne({ $or: [{ username: githubUsername }, { email: primaryEmail }] });
         if (!user) {
             user = await User.create({
                 username: githubUsername,

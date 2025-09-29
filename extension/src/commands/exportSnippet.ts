@@ -52,7 +52,7 @@ export async function registerExportSnippet(context: vscode.ExtensionContext) {
             const res = await uploadSnippet({
                 code: selectedCode,
                 title,
-                language: editor.document.languageId,
+                language: editor.document.languageId.toString(),
                 token,
             });
 

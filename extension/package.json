@@ -19,7 +19,8 @@
   ],
   "keywords": [
     "setup",
-    "dev-env"
+    "exchange dev-env",
+    "code-snippets"
   ],
   "icon": "src/assets/icon.png",
   "main": "./out/extension.js",
