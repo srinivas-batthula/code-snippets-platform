@@ -1,9 +1,7 @@
 // src/helpers/extension_middleware.ts
 import { connectDB } from '@/lib/dbConnect';
-import jwt from 'jsonwebtoken';
+import crypto from "crypto";
 import User from '@/models/User';
-
-const SECRET = process.env.JWT_SECRET!;
 
 export async function middleware(req: Request) {
     const authHeader = req.headers.get('authorization');
@@ -17,13 +15,8 @@ export async function middleware(req: Request) {
         }
     }
     try {
-        const decoded = jwt.verify(token, SECRET);
-        if (!decoded) {
-            throw new Error('Invalid Token');
-        }
-
         await connectDB();
-        const user = await User.findById((decoded as jwt.JwtPayload).userId);
+        const user = await User.findOne({ token });
         if (!user) {
             throw new Error('User Not Found');
         }
@@ -40,4 +33,9 @@ export async function middleware(req: Request) {
             status: 403
         };
     }
+}
+
+export async function generateCryptoToken() {
+    const rawToken = crypto.randomBytes(32).toString("hex"); // 64 hex chars ~ 256 bits token...
+    return rawToken;
 }

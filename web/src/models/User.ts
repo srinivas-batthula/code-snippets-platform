@@ -8,12 +8,13 @@ export interface IUser extends Document {
     password?: string;
     avatar_url?: string;
     bio?: string;
-    
+
     is_from_oauth: boolean;
     is_verified: boolean;
     otp?: string;
     otp_expiry?: Date;
     is_admin: boolean;
+    token: string;
 
     last_login?: Date;
     createdAt: Date;
@@ -35,6 +36,7 @@ const userSchema = new Schema<IUser>(
         bio: { type: String },
         otp: { type: String },
         otp_expiry: { type: Date },
+        token: { type: String, unique: true, index: true },
 
         is_admin: { type: Boolean, default: false },
         last_login: { type: Date },

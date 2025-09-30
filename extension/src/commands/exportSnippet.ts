@@ -45,8 +45,9 @@ export async function registerExportSnippet(context: vscode.ExtensionContext) {
 
         try {
             // Step 2: Ensure auth
-            const token = await ensureAuth(context);
-            if (!token) return;
+            const tokenRes = await ensureAuth(context);
+            if (!tokenRes) return;
+            const token = String(tokenRes);
 
             // Step 3: Upload to API (via helper)...
             const res = await uploadSnippet({

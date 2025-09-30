@@ -7,6 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { connectDB } from "@/lib/dbConnect";
 import UserModel from "@/models/User";
 import bcrypt from 'bcryptjs';
+import { generateCryptoToken } from "@/helpers/extension_middleware";
 
 
 // Extend JWT token structure
@@ -124,17 +125,24 @@ export const authOptions: NextAuthOptions = {
 
             const exists = await UserModel.findOne({ email: user.email });
             if (!exists) {
+                const token = await generateCryptoToken();  // Add a unique `Token` to connect to 'VSCode' Extension...
                 await UserModel.create({
                     email: user.email,
                     username: user.name?.split(" ").join("_").toLowerCase() || "user",
-                    last_login: new Date(), // Update `last_login` time...
                     is_from_oauth: true,
-                    isVerified: true, // You can choose to mark OAuth users as verified
+                    is_verified: true, // You can choose to mark OAuth users as verified
+                    token,
+                    last_login: new Date(), // Update `last_login` time...
                 });
+            }
+            else if (!exists.token) {   // If user 'existed', but `token` is 'not-existed'...
+                const token = await generateCryptoToken();  // Add a unique `Token` to connect to 'VSCode' Extension...
+                await UserModel.findByIdAndUpdate(exists._id, { token, last_login: new Date() });
             }
             else {
                 await UserModel.findByIdAndUpdate(exists._id, { last_login: new Date() }); // Update `last_login` time...
             }
+
             return true;
         },
     },

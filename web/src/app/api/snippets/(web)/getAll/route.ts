@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url); // Search Query-Params (`/api/snippets/getAll?id=..&user=..&language=..&tag=..&search=..&cursor=..`)
 
-        const limit = Math.min(20, parseInt(searchParams.get("limit") || "1")); // default `limit=10`
+        const limit = Math.min(20, parseInt(searchParams.get("limit") || "10")); // default `limit=10`
         const language = searchParams.get("language");
         const tag = searchParams.get("tag");
         const search = searchParams.get("search");

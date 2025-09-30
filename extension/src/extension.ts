@@ -6,10 +6,14 @@ import { registerLogout } from './commands/logout';
 import { registerExportSnippet } from './commands/exportSnippet';
 import { registerImportSnippet } from './commands/importSnippet';
 import uriHandler from './utils/handle_Uris';
+import { ensureAuth } from './utils/auth';
 
 // Central place to register all commands...
 // This `extension.ts` is called to activate / deactivate the extension...
 export function activate(context: vscode.ExtensionContext) {
+    // To verify that If the User is Logged-In Or Not...
+    ensureAuth(context);
+
     // Intro Starter WebView Panel
     registerIntro(context);
 
