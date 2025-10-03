@@ -21,11 +21,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             id: snippetWithOwner._id?.toString(),
             title: snippetWithOwner.title,
             description: snippetWithOwner.description,
+
             code: snippetWithOwner.code,
             language: snippetWithOwner.lang,
             tags: snippetWithOwner.tags,
+
             publisherName: snippetWithOwner.publisherName,
             publisherId: snippetWithOwner.publisherId,
+            
             createdAt: snippetWithOwner.createdAt,
             updatedAt: snippetWithOwner.updatedAt,
         };

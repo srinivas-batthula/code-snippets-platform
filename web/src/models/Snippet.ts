@@ -5,11 +5,13 @@ export interface ISnippet extends mongoose.Document {
     _id: mongoose.Schema.Types.ObjectId | string,
     title: string;
     description?: string;
+
     code: string;
-    publisherId: mongoose.Schema.Types.ObjectId | string;
-    publisherName: string,
     lang: string;
     tags?: string[];
+
+    publisherId: mongoose.Schema.Types.ObjectId | string;
+    publisherName: string,
 
     createdAt: Date;
     updatedAt: Date;
@@ -17,13 +19,16 @@ export interface ISnippet extends mongoose.Document {
 
 const SnippetSchema = new Schema<ISnippet>(
     {
-        title: { type: String, index: true, required: true },
+        title: { type: String, required: true },
         description: { type: String, default: '' },
+
         code: { type: String, required: true },
-        publisherId: { type: Schema.Types.ObjectId, ref: 'users', required: true },
-        publisherName: { type: String, required: true, index: true },
+        
         lang: { type: String, default: 'text' },
         tags: { type: [String], default: [] },
+
+        publisherId: { type: Schema.Types.ObjectId, ref: 'users', required: true },
+        publisherName: { type: String, required: true, index: true },
     },
     { timestamps: true }
 );

@@ -4,8 +4,7 @@ import { connectDB } from '@/lib/dbConnect';
 import Snippet from '@/models/Snippet';
 import { middleware } from '@/helpers/extension_middleware';
 
-const MAX_SNIPPET_SIZE = 10_000; // characters (10KB approx)
-
+const MAX_SNIPPET_SIZE = 10_000; // snippet-characters (10KB approx)
 
 export async function POST(req: Request) {
     try {
@@ -15,8 +14,8 @@ export async function POST(req: Request) {
         const user = resp.user;     // User returned, after Authorization-Check...
 
         const body = await req.json();
-        const { code, title, language, tags = [] } = body || {};
-        
+        const { code, title, description = '', language, tags = [] } = body || {};
+
         // Validate the presence of 'code', 'title', 'language'...
         if ((!code || typeof code !== 'string' || code.trim().length === 0) || (!title || typeof title !== 'string' || title.trim().length === 0) || (!language || typeof language !== 'string' || language.trim().length === 0)) {
             return NextResponse.json({ ok: false, message: 'Missing `code` / `title` / `language` in request body!' }, { status: 400 });
@@ -36,6 +35,7 @@ export async function POST(req: Request) {
 
         const snippet = await Snippet.create({
             title: title || `Snippet from ${user.username}`,
+            description,
             code,
             lang: language,
             tags,

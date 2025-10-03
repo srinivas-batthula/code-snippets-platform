@@ -85,7 +85,7 @@ export function getConfigurePanelHtml(): string {
             <input id="key" type="text" placeholder="Paste your API key here..." />
             <div>
                 <button class="btn btn-primary" onclick="sendKey()">Configure</button>
-                <button style="text-decoration: underline;" class="btn btn-secondary" onclick="openSite()">Click here to generate API-Key!</button>
+                <button style="text-decoration: underline;" class="btn btn-secondary" onclick="openSite()">Click here to generate new API-Key!</button>
             </div>
             <div id="message" class="message"></div>
 

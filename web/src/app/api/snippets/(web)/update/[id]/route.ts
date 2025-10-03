@@ -18,15 +18,20 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         if (!session || !session.user) return NextResponse.json({ success: false, message: 'Unauthorized, Please Do Login to Update!' }, { status: 401 });
 
         await connectDB();
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return NextResponse.json({ success: false, message: 'Invalid Snapshot ID format!' }, { status: 400 });
+        }
         const snippetId = new mongoose.Types.ObjectId(id);   // Convert to ObjectId
 
         const body = await req.json();
-        const { code, title, language, tags = [] } = body || {};
+        const { code, title, description, language, tags = [] } = body || {};
 
         // Building dynamic 'updateData'-obj that Only `updates` 'fields' which are provided by the `user` (and 'Valid')...
         const updateData: Record<string, string | string[]> = {};
         if (title && typeof title === 'string' && title.trim().length > 0)
             updateData.title = title;
+        if (description && typeof description === 'string' && description.trim().length > 0)
+            updateData.description = description;
         if (code && typeof code === 'string' && code.trim().length > 0)
             updateData.code = code;
         if (language && typeof language === 'string' && language.trim().length > 0)
@@ -49,17 +54,22 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         }
 
         const snippet = await Snippet.findByIdAndUpdate(snippetId, updateData, { new: true });
-
+        if (!snippet) {
+            return NextResponse.json({ success: false, message: 'Snippet not found!' }, { status: 404 });
+        }
         // Return minimal snippet fields (avoid leaking DB internals)
         const safe = {
             id: snippet._id?.toString(),
             title: snippet.title,
             description: snippet.description,
+
             code: snippet.code,
             language: snippet.lang,
             tags: snippet.tags,
+
             publisherName: snippet.publisherName,
             publisherId: snippet.publisherId,
+            
             createdAt: snippet.createdAt,
             updatedAt: snippet.updatedAt,
         };

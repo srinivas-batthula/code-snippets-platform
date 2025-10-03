@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         if (!user) return NextResponse.json({ success: false, message: 'User Not Found!' }, { status: 403 });
 
         const body = await req.json();
-        const { code, title, language, tags = [] } = body || {};
+        const { code, title, description, language, tags = [] } = body || {};
 
         // Validate the presence of 'code', 'title', 'language'...
         if ((!code || typeof code !== 'string' || code.trim().length === 0) || (!title || typeof title !== 'string' || title.trim().length === 0) || (!language || typeof language !== 'string' || language.trim().length === 0)) {
@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
 
         const snippet = await Snippet.create({
             title: title || `Snippet from ${user.username}`,
+            description,
             code,
             lang: language || 'text',
             tags,

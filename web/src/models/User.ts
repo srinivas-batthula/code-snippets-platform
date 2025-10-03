@@ -36,7 +36,7 @@ const userSchema = new Schema<IUser>(
         bio: { type: String },
         otp: { type: String },
         otp_expiry: { type: Date },
-        token: { type: String, unique: true, index: true },
+        token: { type: String, unique: true, index: true }, // PAT-Access_Token to connect to 'VSCode' from Website...
 
         is_admin: { type: Boolean, default: false },
         last_login: { type: Date },

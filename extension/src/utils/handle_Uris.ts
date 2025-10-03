@@ -9,9 +9,8 @@ export default function uriHandler() {
             const path = uri.path || null; // e.g., "/redirect"
             const queryParams = new URLSearchParams(uri.query);
 
-            if (path === '/redirect') {     // handle redirect after OAuth...
-                const state = queryParams.get('state') || null;
-                log(`Redirected-OAuth with state: ${state}`, 'info');
+            if (path === '/intro') {     // handle redirect from Website... (vscode://srinivas-batthula.codesnippets/intro) /...
+                vscode.commands.executeCommand("codesnippets.intro"); // / `Fallback` -> (vscode:extension/srinivas-batthula.codesnippets)...
             }
             else {
                 log('Unknown URI route received!', 'warn');

@@ -5,6 +5,10 @@ import { registerLogin } from './commands/login';
 import { registerLogout } from './commands/logout';
 import { registerExportSnippet } from './commands/exportSnippet';
 import { registerImportSnippet } from './commands/importSnippet';
+import { registerExportSnapshot } from './commands/exportSnapshot';
+import { registerImportSnapshot } from './commands/importSnapshot';
+import { registerOpenSnapshotFiles } from './commands/openSnapshotFiles';
+import { registerSearch } from './commands/search';
 import uriHandler from './utils/handle_Uris';
 import { ensureAuth } from './utils/auth';
 
@@ -24,6 +28,14 @@ export function activate(context: vscode.ExtensionContext) {
     // Snippets cmds
     registerExportSnippet(context);
     registerImportSnippet(context);
+
+    // Snapshots cmds
+    registerExportSnapshot(context);
+    registerImportSnapshot(context);
+    registerOpenSnapshotFiles(context);
+
+    // 'Snapshots / Snippets' Search cmd
+    registerSearch(context);
 
     uriHandler();   // To handle redirect URI's from external sites...
 };

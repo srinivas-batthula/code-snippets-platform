@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url); // Search Query-Params (`/api/snippets/getAll?id=..&user=..&language=..&tag=..&search=..&cursor=..`)
 
-        const limit = Math.min(20, parseInt(searchParams.get("limit") || "10")); // default `limit=10`
+        const limit = Math.min(20, parseInt(searchParams.get("limit") || "10")); // default `limit=10`/per page (min = 10 && max = 20)...
         const language = searchParams.get("language");
         const tag = searchParams.get("tag");
         const search = searchParams.get("search");
@@ -62,7 +62,7 @@ export async function GET(req: Request) {
                                 _id: 1,
                                 title: 1,
                                 description: 1,
-                                // code: 1,     // Use `/import/[id]` route to get all fields of a particular snippet... 
+                                // code: 1,     // Use `/import/[id]` route to get all fields of a particular 'snippet' to reduce load... 
                                 lang: 1,
                                 tags: 1,
                                 createdAt: 1,
@@ -97,25 +97,28 @@ export async function GET(req: Request) {
                 snippets: snippetsData.map((s) => ({
                     id: s._id.toString(),
                     title: s.title,
-                    description: s.description,
+                    description: s.description || null,
+
                     language: s.lang,
                     tags: s.tags,
+
                     createdAt: s.createdAt,
                     updatedAt: s.updatedAt,
+
                     publisherId: s.publisherId,
                     publisherName: s.publisherName || "Unknown"
                 })),
                 pagination: {
-                    totalSnippets: totalCount,
+                    totalCount,
                     limit,
                     totalPages: Math.ceil(totalCount / limit),
+
                     hasNextPage,
                     nextCursor,
                 },
             },
             { status: 200 }
         );
-
     } catch (err: any) {
         // console.error("Error fetching snippets:", err);
         return NextResponse.json(
