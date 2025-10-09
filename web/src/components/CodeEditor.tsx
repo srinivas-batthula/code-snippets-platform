@@ -240,14 +240,16 @@ export default function CodeEditor({
 
                 {/* Font Size Controls */}
                 <div className="space-y-2">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 ">
                     <FormLabel>Font Size</FormLabel>
                     <Select
+                      
                       value={fontSize.toString()}
                       onValueChange={(value) => setFontSize(Number(value))}
-                      disabled={isLoading}
+                      disabled={isLoading} 
+                      
                     >
-                      <SelectTrigger className="w-fit">
+                      <SelectTrigger className="w-22">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
