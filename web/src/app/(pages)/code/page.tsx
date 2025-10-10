@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import useSWR from "swr";
 import {
   Card,
   CardAction,
@@ -47,6 +49,23 @@ const pillColors = [
   "bg-red-100 text-red-800 border-red-200",
 ];
 
+// SWR fetcher function
+const fetcher = async (url: string): Promise<ApiResponse> => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch snippets");
+  }
+
+  const data = await response.json();
+
+  if (!data.ok) {
+    throw new Error("API returned error");
+  }
+
+  return data;
+};
+
 // Function to get random color for pills
 const getRandomPillColor = () => {
   return pillColors[Math.floor(Math.random() * pillColors.length)];
@@ -92,12 +111,12 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
       if (!container) return;
 
       // Create a temporary element to measure tag widths
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.visibility = 'hidden';
-      tempContainer.style.whiteSpace = 'nowrap';
-      tempContainer.style.display = 'flex';
-      tempContainer.style.gap = '8px';
+      const tempContainer = document.createElement("div");
+      tempContainer.style.position = "absolute";
+      tempContainer.style.visibility = "hidden";
+      tempContainer.style.whiteSpace = "nowrap";
+      tempContainer.style.display = "flex";
+      tempContainer.style.gap = "8px";
       document.body.appendChild(tempContainer);
 
       const containerWidth = container.offsetWidth;
@@ -108,8 +127,9 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
 
       for (let i = 0; i < tags.length; i++) {
         // Create temporary tag element
-        const tempTag = document.createElement('span');
-        tempTag.className = 'px-2 py-1 rounded-full text-xs font-medium border bg-blue-100 text-blue-800 border-blue-200';
+        const tempTag = document.createElement("span");
+        tempTag.className =
+          "px-2 py-1 rounded-full text-xs font-medium border bg-blue-100 text-blue-800 border-blue-200";
         tempTag.textContent = tags[i];
         tempContainer.appendChild(tempTag);
 
@@ -118,7 +138,9 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
 
         // Check if we need to reserve space for +N pill
         const needsOverflowPill = i < tags.length - 1;
-        const totalWidthNeeded = widthWithGap + (needsOverflowPill ? GAP_SIZE + OVERFLOW_PILL_WIDTH : 0);
+        const totalWidthNeeded =
+          widthWithGap +
+          (needsOverflowPill ? GAP_SIZE + OVERFLOW_PILL_WIDTH : 0);
 
         if (totalWidthNeeded <= containerWidth) {
           currentWidth = widthWithGap;
@@ -132,7 +154,7 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
 
       // Ensure at least one tag is visible
       visibleCount = Math.max(1, visibleCount);
-      
+
       // If we need to show overflow pill, reduce visible count by 1 if necessary
       if (visibleCount < tags.length && visibleCount > 1) {
         visibleCount = Math.max(1, visibleCount - 1);
@@ -145,9 +167,9 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
     calculateVisibleTags();
 
     const handleResize = () => calculateVisibleTags();
-    window.addEventListener('resize', handleResize);
-    
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
   }, [tags]);
 
   if (tags.length === 0) return null;
@@ -163,7 +185,7 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
           {tag}
         </span>
       ))}
-      
+
       {/* Overflow indicator */}
       {hiddenTags.length > 0 && (
         <div className="relative">
@@ -174,7 +196,7 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
           >
             +{hiddenTags.length}
           </span>
-          
+
           {/* Tooltip */}
           {showTooltip && (
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
@@ -201,38 +223,28 @@ const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
 };
 
 export default function SearchPage() {
-  const [snippets, setSnippets] = useState<Snippet[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchSnippets = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/api/snippets/web/get-all?limit=20");
+  // Use SWR for data fetching and caching
+  const { data, error, isLoading } = useSWR(
+    "/api/snippets/web/get-all?limit=20",
+    fetcher,
+    {
+      revalidateOnFocus: false, // Don't refetch when window regains focus
+      revalidateOnReconnect: true, // Refetch when reconnected to internet
+      dedupingInterval: 60000, // Dedupe requests for 1 minute
+    },
+  );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch snippets");
-        }
+  const snippets = data?.snippets || [];
 
-        const data: ApiResponse = await response.json();
+  const handleSnippetClick = (snippet: Snippet) => {
+    // Store snippet data in sessionStorage to avoid refetching
+    sessionStorage.setItem("currentSnippet", JSON.stringify(snippet));
+    router.push(`/code/${snippet.id}`);
+  };
 
-        if (data.ok) {
-          setSnippets(data.snippets);
-        } else {
-          throw new Error("API returned error");
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSnippets();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Code Snippets</h1>
@@ -264,7 +276,7 @@ export default function SearchPage() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Code Snippets</h1>
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          Error: {error}
+          Error: {error.message}
         </div>
       </div>
     );
@@ -281,7 +293,11 @@ export default function SearchPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {snippets.map((snippet) => (
-            <Card key={snippet.id} className="flex flex-col gap-0 h-fit">
+            <Card
+              key={snippet.id}
+              className="flex flex-col gap-0 h-fit cursor-pointer hover:shadow-lg transition-shadow duration-200"
+              onClick={() => handleSnippetClick(snippet)}
+            >
               <CardHeader className="">
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-xl font-semibold flex-1 pr-4">
