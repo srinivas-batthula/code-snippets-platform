@@ -1,5 +1,5 @@
 // web/src/models/Snippet.ts
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema } from "mongoose";
 
 export interface ISnippet extends mongoose.Document {
     _id: mongoose.Schema.Types.ObjectId | string,
@@ -15,7 +15,7 @@ export interface ISnippet extends mongoose.Document {
 
     createdAt: Date;
     updatedAt: Date;
-};
+}
 
 const SnippetSchema = new Schema<ISnippet>(
     {
@@ -30,7 +30,7 @@ const SnippetSchema = new Schema<ISnippet>(
         publisherId: { type: Schema.Types.ObjectId, ref: 'users', required: true },
         publisherName: { type: String, required: true, index: true },
     },
-    { timestamps: true }
+    { timestamps: true },
 );
 
 SnippetSchema.index({ createdAt: -1, _id: -1 }); // for 'cursor-based sorting'...

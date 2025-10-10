@@ -29,15 +29,15 @@ export const initializePrism = (): Promise<void> => {
 
             // Pre-load common languages
             const languageLoaders = [
-                import("prismjs/components/prism-javascript.js" as any),
-                import("prismjs/components/prism-typescript.js" as any),
-                import("prismjs/components/prism-jsx.js" as any),
-                import("prismjs/components/prism-tsx.js" as any),
-                import("prismjs/components/prism-markup.js" as any), // for HTML
-                import("prismjs/components/prism-css.js" as any),
-                import("prismjs/components/prism-json.js" as any),
-                import("prismjs/components/prism-python.js" as any),
-                import("prismjs/components/prism-bash.js" as any),
+                await import("prismjs/components/prism-javascript.js" as any),
+                await import("prismjs/components/prism-typescript.js" as any),
+                await import("prismjs/components/prism-jsx.js" as any),
+                await import("prismjs/components/prism-tsx.js" as any),
+                await import("prismjs/components/prism-markup.js" as any), // for HTML
+                await import("prismjs/components/prism-css.js" as any),
+                await import("prismjs/components/prism-json.js" as any),
+                await import("prismjs/components/prism-python.js" as any),
+                await import("prismjs/components/prism-bash.js" as any),
             ];
 
             // Load line numbers plugin

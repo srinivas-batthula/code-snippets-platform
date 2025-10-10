@@ -28,6 +28,7 @@ import {
   type CodeEditorFormData,
   type SupportedLanguage,
 } from "@/schemas/codeEditorFormSchema";
+import axios from "axios";
 
 interface CodeEditorProps {
   /** Initial form data */
@@ -122,9 +123,17 @@ export default function CodeEditor({
 
   const handleFormSubmit = async (data: CodeEditorFormData) => {
     try {
-      await onSubmit?.(data);
+      console.log("Submitting form with data:", data);
+      const response = await axios.post("/api/snippets/web/upload", data);
+
+      console.log("Form submitted successfully:", data);
+      console.log("Server response:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Response data:", error.response?.data);
+        console.error("Status:", error.response?.status);
+      }
     }
   };
 
@@ -231,14 +240,16 @@ export default function CodeEditor({
 
                 {/* Font Size Controls */}
                 <div className="space-y-2">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 ">
                     <FormLabel>Font Size</FormLabel>
                     <Select
+                      
                       value={fontSize.toString()}
                       onValueChange={(value) => setFontSize(Number(value))}
-                      disabled={isLoading}
+                      disabled={isLoading} 
+                      
                     >
-                      <SelectTrigger className="w-fit">
+                      <SelectTrigger className="w-22">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
