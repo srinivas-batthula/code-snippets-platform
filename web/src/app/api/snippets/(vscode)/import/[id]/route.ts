@@ -4,26 +4,31 @@ import { connectDB } from '@/lib/dbConnect';
 import Snippet from '@/models/Snippet';
 import mongoose from 'mongoose';
 
+// This `api-endpoint` is used by both 'website & Extension' to get a snippet by ID...
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const id = params?.id;
-        if (!id) return NextResponse.json({ ok: false, message: 'Missing `id`!' }, { status: 400 });
+        if (!id) return NextResponse.json({ ok: false, message: 'Missing `id` of Snippet!' }, { status: 400 });
 
         await connectDB();
         const objectId = new mongoose.Types.ObjectId(id);   // Convert to ObjectId
 
-        const snippetWithOwner = await Snippet.findById(objectId)
-            .populate('publisherId', 'username') // only get 'username' from `User` of the `publisher` of this snippet...
-            .lean();
+        const snippetWithOwner = await Snippet.findById(objectId).lean();
         if (!snippetWithOwner || Array.isArray(snippetWithOwner)) return NextResponse.json({ ok: false, message: `Snippet not found with the ID: ${id}!` }, { status: 404 });
 
         // Return minimal snippet fields (avoid leaking DB internals)
         const safe = {
             id: snippetWithOwner._id?.toString(),
             title: snippetWithOwner.title,
+            description: snippetWithOwner.description,
+
             code: snippetWithOwner.code,
-            language: snippetWithOwner.language,
-            publisherName: snippetWithOwner?.publisherId?.username,
+            language: snippetWithOwner.lang,
+            tags: snippetWithOwner.tags,
+
+            publisherName: snippetWithOwner.publisherName,
+            publisherId: snippetWithOwner.publisherId,
+            
             createdAt: snippetWithOwner.createdAt,
             updatedAt: snippetWithOwner.updatedAt,
         };

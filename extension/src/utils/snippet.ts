@@ -14,15 +14,15 @@ export async function uploadSnippet({ code, title, language, token }: {
     try {
         const fetch = (await import('node-fetch')).default; // dynamic import for node-fetch to support ESM/CJS interop
 
-        const resp = await fetch(`${API_BASE}/api/snippets/upload`, {
+        const resp = await fetch(`${API_BASE}/api/snippets/export`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
-                code,
                 title,
+                code,
                 language,
             }),
         });
@@ -31,7 +31,7 @@ export async function uploadSnippet({ code, title, language, token }: {
         return res;
     }
     catch (err) {
-        return { ok: false, message: (err as any).message || 'Failed to Upload!' };
+        return { ok: false, message: (err as any).message || 'Failed to Upload Snippet!' };
     }
 };
 
@@ -46,6 +46,6 @@ export async function fetchSnippetById(id: string): Promise<{ ok: boolean, messa
         return res;
     }
     catch (err) {
-        return { ok: false, message: (err as any).message || 'Failed to Import!' };
+        return { ok: false, message: (err as any).message || 'Failed to Import Snippet!' };
     }
 }

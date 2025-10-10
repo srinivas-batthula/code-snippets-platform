@@ -2,12 +2,16 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ISnippet extends mongoose.Document {
+    _id: mongoose.Schema.Types.ObjectId | string,
     title: string;
     description?: string;
+
     code: string;
-    publisherId: mongoose.Schema.Types.ObjectId | string;
-    language?: string;
+    lang: string;
     tags?: string[];
+
+    publisherId: mongoose.Schema.Types.ObjectId | string;
+    publisherName: string,
 
     createdAt: Date;
     updatedAt: Date;
@@ -15,20 +19,23 @@ export interface ISnippet extends mongoose.Document {
 
 const SnippetSchema = new Schema<ISnippet>(
     {
-        title: { type: String, index: true, required: true },
-        description: { type: String, default: "" },
+        title: { type: String, required: true },
+        description: { type: String, default: '' },
+
         code: { type: String, required: true },
-        publisherId: {
-            type: Schema.Types.ObjectId,
-            ref: "users",
-            index: true,
-            required: true,
-        },
-        language: { type: String, default: "text" },
+        
+        lang: { type: String, default: 'text' },
         tags: { type: [String], default: [] },
+
+        publisherId: { type: Schema.Types.ObjectId, ref: 'users', required: true },
+        publisherName: { type: String, required: true, index: true },
     },
     { timestamps: true },
 );
 
-export default mongoose.models.snippets ||
-    mongoose.model<ISnippet>("snippets", SnippetSchema);
+SnippetSchema.index({ createdAt: -1, _id: -1 }); // for 'cursor-based sorting'...
+SnippetSchema.index({ lang: 1, createdAt: -1 });
+SnippetSchema.index({ tags: 1, createdAt: -1 });
+SnippetSchema.index({ title: "text", description: "text" }); // for `$text` search...
+
+export default mongoose.models.snippets || mongoose.model<ISnippet>('snippets', SnippetSchema);

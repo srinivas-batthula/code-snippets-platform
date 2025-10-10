@@ -19,7 +19,8 @@
   ],
   "keywords": [
     "setup",
-    "dev-env"
+    "exchange dev-env",
+    "code-snippets"
   ],
   "icon": "src/assets/icon.png",
   "main": "./out/extension.js",
@@ -51,11 +52,11 @@
       },
       {
         "command": "codesnippets.login",
-        "title": "Login (via GitHub) : CodeSnippets"
+        "title": "Login / Configure API-KEY : CodeSnippets"
       },
       {
         "command": "codesnippets.logout",
-        "title": "Logout : CodeSnippets"
+        "title": "Logout / Clear API-KEY : CodeSnippets"
       },
       {
         "command": "codesnippets.exportSnippet",
@@ -64,6 +65,22 @@
       {
         "command": "codesnippets.importSnippet",
         "title": "Import Snippet by ID : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.exportSnapshot",
+        "title": "Export Current Dev Environment as Snapshot : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.importSnapshot",
+        "title": "Import Dev Environment Snapshot by ID  : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.openSnapshotFiles",
+        "title": "Open VSCode Dev-Env Snapshot Files : CodeSnippets"
+      },
+      {
+        "command": "codesnippets.search",
+        "title": "Search Snippets / Snapshots : CodeSnippets"
       }
     ],
     "menus": {

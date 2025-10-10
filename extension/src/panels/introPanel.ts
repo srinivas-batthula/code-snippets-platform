@@ -1,4 +1,8 @@
 // src/panels/introPanel.ts
+import * as vscode from 'vscode';
+
+const config = vscode.workspace.getConfiguration("codesnippets");
+const API_BASE = config.get<string>('apiBaseUrl')!;
 
 export function getIntroPanelHtml(username: string): string {
   return `
@@ -34,7 +38,7 @@ export function getIntroPanelHtml(username: string): string {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         padding: 2rem 3rem;
         text-align: center;
-        max-width: 500px;
+        max-width: 600px;
         width: 90%;
         animation: fadeIn 0.6s ease-in-out;
       }
@@ -76,37 +80,79 @@ export function getIntroPanelHtml(username: string): string {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
       }
-      .quick-guide {
-        font-size: 0.95rem;
-        color: white;
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border);
+        min-width: 250px;
         text-align: left;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
+        padding: 10px;
+        border-radius: 8px;
+        z-index: 1;
+        font-size: 0.9rem;
+        color: #ccc;
+      }
+      .dropdown-content strong {
+        color: var(--accent);
+      }
+      .dropdown.show .dropdown-content {
+        display: block;
       }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>Hello, ${username}!</h1>
-      <p>Welcome to <strong>CodeSnippets</strong>.</p>
+      <p>Welcome to <strong onclick="sendUrl('${API_BASE}')" style="text-decoration: underline; cursor: pointer;">CodeSnippets</strong>.</p>
 
       <div class="cmd-list">
-        <h3>Quick Commands</h3>
+        <h2>Quick Commands</h2>
         
+        <!-- Auth -->
         <button onclick="sendCommand('login')">Login</button>
         <button onclick="sendCommand('logout')">Logout</button>
-      </div>
-
-      <div class="quick-guide">
-        <strong>To Export a Snippet : </strong><br/>
-        Select code → Right click over it → Click on <em>'Export Selected Code as Snippet : CodeSnippets'</em> → Your code snippet is uploaded to the cloud!
         <br/><br/>
-        <strong>To Import a Snippet : </strong><br/>
-        Right click anywhere in the editor → Click on <em>'Import Snippet by ID : CodeSnippets'</em> → Enter the ID to load and insert the snippet into current file.
+
+        <!-- Search Snippets & Snapshots -->
+        <button onclick="sendCommand('search')">Search Snippets / Snapshots</button>
+        <br/><br/>
+
+        <!-- Snapshots -->
+        <button onclick="sendCommand('importSnapshot')">Import Snapshot</button>
+        <button onclick="sendCommand('exportSnapshot')">Export Snapshot</button>
+        <button onclick="sendCommand('openSnapshotFiles')">Open Snapshot Files</button>
+        <br/><br/>
+
+        <!-- Snippets -->
+        <div class="dropdown" id="exportDropdown">
+          <button onclick="toggleDropdown('exportDropdown')">Export Snippet</button>
+          <div class="dropdown-content">
+            <strong>To Export a Snippet:</strong><br/>
+            1. Select code in editor<br/>
+            2. Right click → <em>'Export Selected Code as Snippet : CodeSnippets'</em><br/>
+            3. Snippet is uploaded to the cloud!
+          </div>
+        </div>
+
+        <div class="dropdown" id="importDropdown">
+          <button onclick="toggleDropdown('importDropdown')">Import Snippet</button>
+          <div class="dropdown-content">
+            <strong>To Import a Snippet:</strong><br/>
+            1. Right click anywhere in the editor<br/>
+            2. Click on <em>'Import Snippet by ID : CodeSnippets'</em><br/>
+            3. Enter the ID to load and insert the snippet into current file.
+          </div>
+        </div>
+        <br/><br/>
+
       </div>
 
-      <p class="footer-text">~ Team CodeSnippets</p>
+      <p class="footer-text">~ Support Team <strong style="color: #4ea1ff;">-CodeSnippets</strong></p>
     </div>
 
     <script>
@@ -115,6 +161,28 @@ export function getIntroPanelHtml(username: string): string {
       function sendCommand(command) {
         vscode.postMessage({ command, type: "cmd" });
       }
+
+      function sendUrl(url) {
+        vscode.postMessage({ url, type: "url" });
+      }
+
+      function toggleDropdown(id) {
+        const dropdowns = document.querySelectorAll(".dropdown");
+        dropdowns.forEach(d => {
+          if (d.id === id) {
+            d.classList.toggle("show");
+          } else {
+            d.classList.remove("show");
+          }
+        });
+      }
+
+      // Auto-close if clicked outside
+      window.addEventListener("click", function(e) {
+        if (!e.target.closest(".dropdown")) {
+          document.querySelectorAll(".dropdown").forEach(d => d.classList.remove("show"));
+        }
+      });
     </script>
   </body>
   </html>

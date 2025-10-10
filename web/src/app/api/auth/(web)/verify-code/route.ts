@@ -1,5 +1,6 @@
 import {connectDB} from "@/lib/dbConnect";
 import UserModel from "@/models/User";
+import { generateCryptoToken } from "@/helpers/extension_middleware";
 
 
 export async function POST(request: Request) {
@@ -27,6 +28,8 @@ export async function POST(request: Request) {
         const isVerifyCodeNotExpiried = (user.otp_expiry) ? (new Date(user.otp_expiry) > new Date()) : false;
 
         if (codeVerified && isVerifyCodeNotExpiried) {
+            const token = await generateCryptoToken();  // Add a unique Token to connect to VSCode Extension...
+            user.token = token;
             user.is_verified = true;
             user.otp = undefined;
             user.otp_expiry = undefined;

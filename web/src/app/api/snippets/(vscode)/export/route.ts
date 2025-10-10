@@ -1,11 +1,10 @@
-// web/src/app/api/snippets/(vscode)/upload/route.ts
+// web/src/app/api/snippets/(vscode)/export/route.ts
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/dbConnect';
 import Snippet from '@/models/Snippet';
 import { middleware } from '@/helpers/extension_middleware';
 
-const MAX_SNIPPET_SIZE = 10_000; // characters (10KB approx)
-
+const MAX_SNIPPET_SIZE = 10_000; // snippet-characters (10KB approx)
 
 export async function POST(req: Request) {
     try {
@@ -15,11 +14,11 @@ export async function POST(req: Request) {
         const user = resp.user;     // User returned, after Authorization-Check...
 
         const body = await req.json();
-        const { code, title, language, tags = [] } = body || {};
+        const { code, title, description = '', language, tags = [] } = body || {};
 
-        // Validate code presence and size
-        if ((!code || typeof code !== 'string' || code.trim().length === 0) || (!title || typeof title !== 'string' || title.trim().length === 0)) {
-            return NextResponse.json({ ok: false, message: 'Missing `code` / `title` in request body!' }, { status: 400 });
+        // Validate the presence of 'code', 'title', 'language'...
+        if ((!code || typeof code !== 'string' || code.trim().length === 0) || (!title || typeof title !== 'string' || title.trim().length === 0) || (!language || typeof language !== 'string' || language.trim().length === 0)) {
+            return NextResponse.json({ ok: false, message: 'Missing `code` / `title` / `language` in request body!' }, { status: 400 });
         }
 
         if (code.length > MAX_SNIPPET_SIZE) {   // Validate 'code-snippet' size...
@@ -36,10 +35,12 @@ export async function POST(req: Request) {
 
         const snippet = await Snippet.create({
             title: title || `Snippet from ${user.username}`,
+            description,
             code,
-            language: language || 'text',
+            lang: language,
             tags,
-            publisherId: user._id
+            publisherId: user._id,
+            publisherName: user.username,
         });
 
         return NextResponse.json({
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
             message: 'Snippet uploaded successfully!',
         }, { status: 201 });
     } catch (err: any) {
+        // console.error(err);
         return NextResponse.json({ ok: false, message: err.message || 'Upload failed!' }, { status: 500 });
     }
 }

@@ -1,8 +1,8 @@
 --->>> Project Setup Guide : 
 
-1. yo code
+1. npm install (To setup a new project `yo code`)
 2. npm run compile
-3. Press 'F5' to Start Extension in dev. mode
-4. Press 'Shift + F5' to Stop dev. mode
+3. Press 'F5' to Start Extension in dev-mode
+4. Press 'Shift + F5' to Stop dev-mode
 
 5. (Only) To publish the extension,, Run `vsce package` & `vsce publish`
