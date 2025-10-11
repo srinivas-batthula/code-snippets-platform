@@ -59,7 +59,7 @@ const fetcher = async (url: string): Promise<ApiResponse> => {
 
   const data = await response.json();
 
-  if (!data.ok) {
+  if (!data.success) {
     throw new Error("API returned error");
   }
 
@@ -82,7 +82,7 @@ const formatDate = (dateString: string) => {
 };
 
 // Function to limit code to lines and calculate height
-const limitCodeToLines = (code: string, maxLines: number = 6) => {
+const limitCodeToLines = (code: string, maxLines: number = 3) => {
   const lines = code.split("\n");
   const limitedLines = lines.slice(0, maxLines);
   const actualLineCount = Math.min(lines.length, maxLines);
@@ -227,7 +227,7 @@ export default function SearchPage() {
 
   // Use SWR for data fetching and caching
   const { data, error, isLoading } = useSWR(
-    "/api/snippets/web/get-all?limit=20",
+    "/api/snippets/getAll",
     fetcher,
     {
       revalidateOnFocus: false, // Don't refetch when window regains focus
