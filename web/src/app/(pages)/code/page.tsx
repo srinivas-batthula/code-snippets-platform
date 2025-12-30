@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import useSWR from "swr";
 import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import PrismHighlighter from "@/components/PrismHighlighter";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { getLanguageDisplayName } from "@/types/languages";
 
 interface Snippet {
   id: string;
@@ -21,54 +21,46 @@ interface Snippet {
   description: string;
   language: string;
   tags: string[];
-  code: string;
   createdAt: string;
   updatedAt: string;
+  publisherId: string;
+  publisherName: string;
 }
 
 interface ApiResponse {
-  ok: boolean;
+  success: boolean;
   snippets: Snippet[];
   pagination: {
-    currentPage: number;
+    totalCount: number;
+    limit: number;
     totalPages: number;
-    totalSnippets: number;
     hasNextPage: boolean;
-    hasPrevPage: boolean;
+    nextCursor: string | null;
   };
+  message?: string; // For error cases
 }
 
-// Define 7 different pill colors
+// Define colors for tags using CSS custom properties
 const pillColors = [
-  "bg-blue-100 text-blue-800 border-blue-200",
-  "bg-green-100 text-green-800 border-green-200",
-  "bg-purple-100 text-purple-800 border-purple-200",
-  "bg-pink-100 text-pink-800 border-pink-200",
-  "bg-yellow-100 text-yellow-800 border-yellow-200",
-  "bg-indigo-100 text-indigo-800 border-indigo-200",
-  "bg-red-100 text-red-800 border-red-200",
+  "bg-chart-1/20 text-chart-1 border-chart-1/30",
+  "bg-chart-2/20 text-chart-2 border-chart-2/30",
+  "bg-chart-3/20 text-chart-3 border-chart-3/30",
+  "bg-chart-4/20 text-chart-4 border-chart-4/30",
+  "bg-chart-5/20 text-chart-5 border-chart-5/30",
+  "bg-accent/20 text-accent-foreground border-accent/30",
+  "bg-secondary/20 text-secondary-foreground border-secondary/30",
 ];
 
-// SWR fetcher function
-const fetcher = async (url: string): Promise<ApiResponse> => {
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch snippets");
+// Deterministic color assignment based on tag content
+const getPillColorForTag = (tag: string) => {
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) {
+    const char = tag.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash;
   }
-
-  const data = await response.json();
-
-  if (!data.ok) {
-    throw new Error("API returned error");
-  }
-
-  return data;
-};
-
-// Function to get random color for pills
-const getRandomPillColor = () => {
-  return pillColors[Math.floor(Math.random() * pillColors.length)];
+  const colorIndex = Math.abs(hash) % pillColors.length;
+  return pillColors[colorIndex];
 };
 
 // Function to format date
@@ -81,191 +73,66 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// Function to limit code to lines and calculate height
+// Function to limit code to lines for preview
 const limitCodeToLines = (code: string, maxLines: number = 6) => {
   const lines = code.split("\n");
   const limitedLines = lines.slice(0, maxLines);
-  const actualLineCount = Math.min(lines.length, maxLines);
-
   return {
     code: limitedLines.join("\n"),
-    lineCount: actualLineCount,
-    // Calculate height: base height + (line height * number of lines)
-    // Using approximate 20px per line + 8px padding
-    height: Math.max(60, actualLineCount * 20 + 16),
+    hasMore: lines.length > maxLines,
   };
 };
 
-// TagsWithOverflow component
-const TagsWithOverflow = ({ tags }: { tags: string[] }) => {
-  const [visibleTags, setVisibleTags] = useState<string[]>([]);
-  const [hiddenTags, setHiddenTags] = useState<string[]>([]);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+export default function CodePage() {
+  const router = useRouter();
+  const [snippets, setSnippets] = useState<Snippet[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch snippets on component mount
   useEffect(() => {
-    if (!containerRef.current || tags.length === 0) return;
+    const fetchSnippets = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-    const calculateVisibleTags = () => {
-      const container = containerRef.current;
-      if (!container) return;
+        const response = await fetch("/api/snippets/web/getAll?limit=20");
 
-      // Create a temporary element to measure tag widths
-      const tempContainer = document.createElement("div");
-      tempContainer.style.position = "absolute";
-      tempContainer.style.visibility = "hidden";
-      tempContainer.style.whiteSpace = "nowrap";
-      tempContainer.style.display = "flex";
-      tempContainer.style.gap = "8px";
-      document.body.appendChild(tempContainer);
-
-      const containerWidth = container.offsetWidth;
-      let currentWidth = 0;
-      let visibleCount = 0;
-      const GAP_SIZE = 8;
-      const OVERFLOW_PILL_WIDTH = 40; // Estimated width for +N pill
-
-      for (let i = 0; i < tags.length; i++) {
-        // Create temporary tag element
-        const tempTag = document.createElement("span");
-        tempTag.className =
-          "px-2 py-1 rounded-full text-xs font-medium border bg-blue-100 text-blue-800 border-blue-200";
-        tempTag.textContent = tags[i];
-        tempContainer.appendChild(tempTag);
-
-        const tagWidth = tempTag.offsetWidth;
-        const widthWithGap = currentWidth + tagWidth + (i > 0 ? GAP_SIZE : 0);
-
-        // Check if we need to reserve space for +N pill
-        const needsOverflowPill = i < tags.length - 1;
-        const totalWidthNeeded =
-          widthWithGap +
-          (needsOverflowPill ? GAP_SIZE + OVERFLOW_PILL_WIDTH : 0);
-
-        if (totalWidthNeeded <= containerWidth) {
-          currentWidth = widthWithGap;
-          visibleCount++;
-        } else {
-          break;
+        if (!response.ok) {
+          throw new Error("Failed to fetch snippets");
         }
+
+        const data: ApiResponse = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || "API returned error");
+        }
+
+        setSnippets(data.snippets);
+      } catch (err: any) {
+        console.error("Fetch error:", err);
+        setError(err.message || "Failed to fetch snippets");
+      } finally {
+        setIsLoading(false);
       }
-
-      document.body.removeChild(tempContainer);
-
-      // Ensure at least one tag is visible
-      visibleCount = Math.max(1, visibleCount);
-
-      // If we need to show overflow pill, reduce visible count by 1 if necessary
-      if (visibleCount < tags.length && visibleCount > 1) {
-        visibleCount = Math.max(1, visibleCount - 1);
-      }
-
-      setVisibleTags(tags.slice(0, visibleCount));
-      setHiddenTags(tags.slice(visibleCount));
     };
 
-    calculateVisibleTags();
-
-    const handleResize = () => calculateVisibleTags();
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, [tags]);
-
-  if (tags.length === 0) return null;
-
-  return (
-    <div ref={containerRef} className="flex items-center gap-2 flex-1 min-w-0">
-      {/* Visible tags */}
-      {visibleTags.map((tag, index) => (
-        <span
-          key={index}
-          className={`px-2 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${getRandomPillColor()}`}
-        >
-          {tag}
-        </span>
-      ))}
-
-      {/* Overflow indicator */}
-      {hiddenTags.length > 0 && (
-        <div className="relative">
-          <span
-            className="px-2 py-1 rounded-full text-xs font-medium border bg-gray-100 text-gray-800 border-gray-200 cursor-pointer hover:bg-gray-200 transition-colors whitespace-nowrap "
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
-          >
-            +{hiddenTags.length}
-          </span>
-
-          {/* Tooltip */}
-          {showTooltip && (
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
-              <div className="bg-card border border-gray-200/70 text-gray-900 text-xs rounded-lg py-2 px-3 shadow-lg whitespace-nowrap w-fit">
-                <div className="flex flex-wrap gap-1 w-fit justify-center items-center">
-                  {hiddenTags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className={`px-2 py-1 rounded-full text-xs font-medium border ${getRandomPillColor()}`}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                {/* Tooltip arrow */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-card"></div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default function SearchPage() {
-  const router = useRouter();
-
-  // Use SWR for data fetching and caching
-  const { data, error, isLoading } = useSWR(
-    "/api/snippets/web/get-all?limit=20",
-    fetcher,
-    {
-      revalidateOnFocus: false, // Don't refetch when window regains focus
-      revalidateOnReconnect: true, // Refetch when reconnected to internet
-      dedupingInterval: 60000, // Dedupe requests for 1 minute
-    },
-  );
-
-  const snippets = data?.snippets || [];
+    fetchSnippets();
+  }, []);
 
   const handleSnippetClick = (snippet: Snippet) => {
     // Store snippet data in sessionStorage to avoid refetching
     sessionStorage.setItem("currentSnippet", JSON.stringify(snippet));
-    router.push(`/code/${snippet.id}`);
+    router.push(`/snippets/${snippet.id}`);
   };
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Code Snippets</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-full"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-              </CardFooter>
-            </Card>
-          ))}
+        <div className="flex flex-col items-center justify-center py-12">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+          <p className="text-muted-foreground">Loading snippets...</p>
         </div>
       </div>
     );
@@ -275,8 +142,8 @@ export default function SearchPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Code Snippets</h1>
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          Error: {error.message}
+        <div className="bg-destructive/15 border border-destructive/20 text-destructive px-4 py-3 rounded">
+          Error: {error}
         </div>
       </div>
     );
@@ -284,63 +151,72 @@ export default function SearchPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Code Snippets</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Code Snippets</h1>
+        <Button onClick={() => router.push("/search")} variant="outline">
+          Search Snippets
+        </Button>
+      </div>
 
       {snippets.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-600">No snippets found.</p>
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">No snippets found.</p>
+          <Button onClick={() => router.push("/editor")} variant="outline">
+            Create Your First Snippet
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {snippets.map((snippet) => (
             <Card
               key={snippet.id}
-              className="flex flex-col gap-0 h-fit cursor-pointer hover:shadow-lg transition-shadow duration-200"
+              className="cursor-pointer hover:shadow-lg transition-shadow duration-200"
               onClick={() => handleSnippetClick(snippet)}
             >
-              <CardHeader className="">
+              <CardHeader>
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-xl font-semibold flex-1 pr-4">
                     {snippet.title}
                   </CardTitle>
                   <CardAction>
                     <Button variant="secondary" size="sm">
-                      {snippet.language}
+                      {getLanguageDisplayName(snippet.language || "text")}
                     </Button>
                   </CardAction>
                 </div>
+                {snippet.description && (
+                  <p className="text-muted-foreground text-sm mt-2 line-clamp-2">
+                    {snippet.description}
+                  </p>
+                )}
               </CardHeader>
 
-              <CardContent className="py-0 my-0">
-                <div className="h-8 flex items-center mb-4">
-                  <TagsWithOverflow tags={snippet.tags} />
-                </div>
+              <CardContent>
+                {/* Tags */}
+                {snippet.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {snippet.tags.slice(0, 3).map((tag, index) => (
+                      <span
+                        key={index}
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${getPillColorForTag(
+                          tag,
+                        )}`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {snippet.tags.length > 3 && (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium border bg-muted text-muted-foreground border-border">
+                        +{snippet.tags.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                )}
               </CardContent>
 
-              <CardContent className="py-0 my-0">
-                <div className="relative rounded-md overflow-hidden h-full">
-                  {(() => {
-                    const codeData = limitCodeToLines(snippet.code, 6);
-                    return (
-                      <div className="h-full overflow-hidden border rounded-md border-gray-700">
-                        <PrismHighlighter
-                          code={codeData.code}
-                          language={snippet.language.toLowerCase()}
-                          showLineNumbers={false}
-                          showCopyButton={true}
-                          className="text-xs"
-                        />
-                      </div>
-                    );
-                  })()}
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#16191d] to-transparent pointer-events-none"></div>
-                </div>
-              </CardContent>
-
-              <CardFooter className="pt-2">
-                <div className="text-xs text-gray-500">
-                  Created: {formatDate(snippet.createdAt)}
-                </div>
+              <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
+                <span>By {snippet.publisherName}</span>
+                <span>{formatDate(snippet.createdAt)}</span>
               </CardFooter>
             </Card>
           ))}

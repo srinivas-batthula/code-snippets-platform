@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Wrap the 'whole App' in 'Providers', So 'NextAuth Session' is available 'globally'... */}
         <Providers>
           <main>{children}</main>
-          <Toaster />
+          <Toaster richColors position="top-right"/>
         </Providers>
       </body>
     </html>

@@ -62,7 +62,7 @@ export async function GET(req: Request) {
                                 _id: 1,
                                 title: 1,
                                 description: 1,
-                                // code: 1,     // Use `/import/[id]` route to get all fields of a particular 'snippet' to reduce load... 
+                                code: 1,     // Use `/import/[id]` route to get all fields of a particular 'snippet' to reduce load... 
                                 lang: 1,
                                 tags: 1,
                                 createdAt: 1,
@@ -101,6 +101,7 @@ export async function GET(req: Request) {
 
                     language: s.lang,
                     tags: s.tags,
+                    code: s.code,
 
                     createdAt: s.createdAt,
                     updatedAt: s.updatedAt,

@@ -29,6 +29,8 @@ import {
   type SupportedLanguage,
 } from "@/schemas/codeEditorFormSchema";
 import axios from "axios";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 interface CodeEditorProps {
   /** Initial form data */
@@ -50,6 +52,7 @@ export default function CodeEditor({
   const [fontSize, setFontSize] = useState<number>(14);
   const [tagInput, setTagInput] = useState<string>("");
   const [isDefaultCode, setIsDefaultCode] = useState<boolean>(true); // Track if current code is default
+  const [isSaving, setIsSaving] = useState<boolean>(false); // Track saving state
 
   // Helper function to get default code for a language
   const getDefaultCode = (lang: SupportedLanguage): string => {
@@ -122,18 +125,46 @@ export default function CodeEditor({
   ];
 
   const handleFormSubmit = async (data: CodeEditorFormData) => {
+    if (isSaving) return; // Prevent multiple submissions
+
+    setIsSaving(true);
     try {
       console.log("Submitting form with data:", data);
-      const response = await axios.post("/api/snippets/web/upload", data);
+      const response = await axios.post("/api/snippets/upload", data);
 
       console.log("Form submitted successfully:", data);
       console.log("Server response:", response.data);
+
+      // Show success message
+      toast.success("Snippet saved successfully!");
+
+      // Optionally reset form after successful submission
+      // form.reset();
     } catch (error) {
       console.error("Error submitting form:", error);
+
+      let errorMessage = "Failed to save snippet. Please try again.";
+
       if (axios.isAxiosError(error)) {
         console.error("Response data:", error.response?.data);
         console.error("Status:", error.response?.status);
+
+        // Extract error message from API response
+        if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.response?.status === 401) {
+          errorMessage = "Please log in to save snippets.";
+        } else if (error.response?.status === 413) {
+          errorMessage = "Snippet is too large. Please reduce the code size.";
+        }
       }
+
+      // Show error message
+      toast.error("Failed to save snippet", {
+        description: errorMessage,
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -229,7 +260,7 @@ export default function CodeEditor({
                           }}
                           placeholder="Select programming language..."
                           searchPlaceholder="Search languages..."
-                          disabled={isLoading}
+                          disabled={isLoading || isSaving}
                           className="w-full"
                         />
                       </FormControl>
@@ -243,11 +274,9 @@ export default function CodeEditor({
                   <div className="flex flex-col gap-2 ">
                     <FormLabel>Font Size</FormLabel>
                     <Select
-                      
                       value={fontSize.toString()}
                       onValueChange={(value) => setFontSize(Number(value))}
-                      disabled={isLoading} 
-                      
+                      disabled={isLoading || isSaving}
                     >
                       <SelectTrigger className="w-22">
                         <SelectValue />
@@ -273,7 +302,7 @@ export default function CodeEditor({
                       <Input
                         placeholder="Enter snippet title..."
                         {...field}
-                        disabled={isLoading}
+                        disabled={isLoading || isSaving}
                       />
                     </FormControl>
                     <FormMessage />
@@ -294,7 +323,7 @@ export default function CodeEditor({
                         placeholder="Describe what this code snippet does..."
                         className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         {...field}
-                        disabled={isLoading}
+                        disabled={isLoading || isSaving}
                       />
                     </FormControl>
                     <FormMessage />
@@ -318,7 +347,7 @@ export default function CodeEditor({
                           value={tagInput}
                           onChange={(e) => setTagInput(e.target.value)}
                           onKeyDown={handleTagInputKeyDown}
-                          disabled={isLoading}
+                          disabled={isLoading || isSaving}
                           className="flex-1"
                         />
                         <Button
@@ -326,7 +355,7 @@ export default function CodeEditor({
                           variant="outline"
                           size="default"
                           onClick={addTag}
-                          disabled={isLoading || !tagInput.trim()}
+                          disabled={isLoading || isSaving || !tagInput.trim()}
                         >
                           Add
                         </Button>
@@ -342,7 +371,7 @@ export default function CodeEditor({
                               <button
                                 type="button"
                                 onClick={() => removeTag(tag)}
-                                disabled={isLoading}
+                                disabled={isLoading || isSaving}
                                 className="text-secondary-foreground/60 hover:text-secondary-foreground"
                               >
                                 ×
@@ -362,13 +391,16 @@ export default function CodeEditor({
                 <Button
                   type="button"
                   variant="outline"
-                  disabled={isLoading}
+                  disabled={isLoading || isSaving}
                   onClick={() => form.reset()}
                 >
                   Reset
                 </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? "Saving..." : "Save Snippet"}
+                <Button type="submit" disabled={isLoading || isSaving}>
+                  {isSaving && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {isSaving ? "Saving..." : "Save Snippet"}
                 </Button>
               </div>
             </div>
@@ -393,7 +425,7 @@ export default function CodeEditor({
                             handleCodeChange(newCode);
                             field.onChange(newCode);
                           }}
-                          readOnly={isLoading}
+                          readOnly={isLoading || isSaving}
                           className="border-0 bg-transparent"
                         />
                       </div>
