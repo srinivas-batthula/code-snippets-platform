@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
+import "../styles/prism-theme.css";
 
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
