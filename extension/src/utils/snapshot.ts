@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { exec } from 'child_process';
 import { log } from './logger';
-import { getDevHostExtensionsDir } from './vscodePaths';
 
 const config = vscode.workspace.getConfiguration("codesnippets");
 const API_BASE = config.get<string>('apiBaseUrl')!;
@@ -57,9 +56,14 @@ export async function fetchSnapshotById(id: string): Promise<{ ok: boolean, mess
 
 // @helper for Installing-Extensions & Merging Settings, Keybindings...
 export async function installExtensions(requiredExtensions: string[]) {
-    const extensionsDir = getDevHostExtensionsDir();
-    if (extensionsDir) {
-        log('Running in Dev-Host VSCode: Snapshot will detect Only extensions installed in Test-Env!', 'info');
+    // Dev-Host guard (Skip installs in Dev-Env)...
+    if (vscode.env.appHost === 'extensionDevelopmentHost') {
+        log(
+            'Skipping extension installation in Extension Dev Host (F5). ' +
+            'This will work correctly in real VS Code.',
+            'warn'
+        );
+        return { newInstalls: [], skipped: requiredExtensions.length };
     }
 
     // Get currently installed extensions
@@ -68,21 +72,45 @@ export async function installExtensions(requiredExtensions: string[]) {
     // Filter out already installed
     const toInstall = requiredExtensions.filter(ext => !installed.includes(ext.toLowerCase()));
 
-    for (const ext of toInstall) {
-        await new Promise((resolve, reject) => {
-            const cmd = extensionsDir
-                ? `code --extensions-dir "${extensionsDir}" --install-extension ${ext}`
-                : `code --install-extension ${ext}`;
+    const newlyInstalled: string[] = [];
+    try {
+        for (const ext of toInstall) {
+            await execAsync(`code --install-extension ${ext}`);
+            newlyInstalled.push(ext);   // track successful installs...
+        }
 
-            exec(cmd, (err) => {
-                if (err) reject(err);
-                else resolve(true);
-            });
-        });
+        return { newInstalls: newlyInstalled, skipped: requiredExtensions.length - newlyInstalled.length };
     }
+    catch (err: any) {
+        log(
+            `Extension install failed. Rolling back ${newlyInstalled.length} extension(s)...`,
+            'error'
+        );
+        // Rollback: uninstall only what we installed newly...
+        for (const ext of newlyInstalled.reverse()) {
+            try {
+                await execAsync(`code --uninstall-extension ${ext}`);
+            } catch {
+                log(`Rollback failed for extension: ${ext}`, 'warn');
+            }
+        }
 
-    return { newInstalls: toInstall, skipped: requiredExtensions.length - toInstall.length };
+        throw new Error(
+            `Snapshot import Failed during extension installation,
+                Rollback completed successfully!`
+        );
+    }
 }
+
+function execAsync(cmd: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        exec(cmd, (err) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+}
+
 
 export async function mergeSettings(newSettings: Record<string, any>, settingsPath: string) {
     backupFile(settingsPath);

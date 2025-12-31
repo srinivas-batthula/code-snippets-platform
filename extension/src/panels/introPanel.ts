@@ -139,15 +139,7 @@ export function getIntroPanelHtml(username: string): string {
           </div>
         </div>
 
-        <div class="dropdown" id="importDropdown">
-          <button onclick="toggleDropdown('importDropdown')">Import Snippet</button>
-          <div class="dropdown-content">
-            <strong>To Import a Snippet:</strong><br/>
-            1. Right click anywhere in the editor<br/>
-            2. Click on <em>'Import Snippet by ID : CodeSnippets'</em><br/>
-            3. Enter the ID to load and insert the snippet into current file.
-          </div>
-        </div>
+        <button onclick="sendCommand('importSnippet')">Import Snippet</button>
         <br/><br/>
 
       </div>

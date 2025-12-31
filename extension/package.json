@@ -48,39 +48,39 @@
     "commands": [
       {
         "command": "codesnippets.intro",
-        "title": "Intro Starter : CodeSnippets"
+        "title": "CodeSnippets: Intro"
       },
       {
         "command": "codesnippets.login",
-        "title": "Login / Configure API-KEY : CodeSnippets"
+        "title": "CodeSnippets: Login"
       },
       {
         "command": "codesnippets.logout",
-        "title": "Logout / Clear API-KEY : CodeSnippets"
+        "title": "CodeSnippets: Logout"
       },
       {
         "command": "codesnippets.exportSnippet",
-        "title": "Export Selected Code as Snippet : CodeSnippets"
+        "title": "CodeSnippets: Export Code Snippet"
       },
       {
         "command": "codesnippets.importSnippet",
-        "title": "Import Snippet by ID : CodeSnippets"
+        "title": "CodeSnippets: Import Code Snippet"
       },
       {
         "command": "codesnippets.exportSnapshot",
-        "title": "Export Current Dev Environment as Snapshot : CodeSnippets"
+        "title": "CodeSnippets: Export Dev-Env Snapshot"
       },
       {
         "command": "codesnippets.importSnapshot",
-        "title": "Import Dev Environment Snapshot by ID  : CodeSnippets"
+        "title": "CodeSnippets: Import Dev-Env Snapshot"
       },
       {
         "command": "codesnippets.openSnapshotFiles",
-        "title": "Open VSCode Dev-Env Snapshot Files : CodeSnippets"
+        "title": "CodeSnippets: Open Snapshot Files"
       },
       {
         "command": "codesnippets.search",
-        "title": "Search Snippets / Snapshots : CodeSnippets"
+        "title": "CodeSnippets: Search"
       }
     ],
     "menus": {
@@ -95,7 +95,50 @@
           "group": "navigation"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "codesnippets.intro",
+        "key": "ctrl+shift+m",
+        "mac": "cmd+shift+m"
+      },
+      {
+        "command": "codesnippets.logout",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l"
+      },
+      {
+        "command": "codesnippets.exportSnippet",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "codesnippets.importSnippet",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i"
+      },
+      {
+        "command": "codesnippets.exportSnapshot",
+        "key": "ctrl+shift+x",
+        "mac": "cmd+shift+x"
+      },
+      {
+        "command": "codesnippets.importSnapshot",
+        "key": "ctrl+shift+p",
+        "mac": "cmd+shift+p"
+      },
+      {
+        "command": "codesnippets.openSnapshotFiles",
+        "key": "ctrl+shift+o",
+        "mac": "cmd+shift+o"
+      },
+      {
+        "command": "codesnippets.search",
+        "key": "ctrl+shift+s",
+        "mac": "cmd+shift+s"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

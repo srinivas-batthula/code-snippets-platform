@@ -63,6 +63,7 @@ export async function registerSearch(context: vscode.ExtensionContext) {
                         ignoreFocusOut: true
                     }
                 );
+                
                 if (!selected) return;
 
                 if (selected.id === "__load_more__") {
@@ -76,7 +77,7 @@ export async function registerSearch(context: vscode.ExtensionContext) {
                 break;      // 'Stop' this `Loop` completely, If user selects any specific 'Snippet / Snapshot'...
             }
         } catch (err: any) {
-            log(`❌ Search command error: ${err.message || 'unknown error'}`, 'error');
+            log(`Search Failed: ${err.message || 'unknown error'}`, 'error');
         }
     });
     context.subscriptions.push(disposable);

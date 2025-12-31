@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Intro Starter WebView Panel
     registerIntro(context);
 
-    // Login & Logout cmds
+    // Auth cmds
     registerLogin(context);
     registerLogout(context);
 
@@ -34,10 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
     registerImportSnapshot(context);
     registerOpenSnapshotFiles(context);
 
-    // 'Snapshots / Snippets' Search cmd
+    // Search cmd
     registerSearch(context);
 
-    uriHandler();   // To handle redirect URI's from external sites...
+    // To handle redirect URI's from external sites...
+    uriHandler();
 };
 
 export function deactivate() { };
