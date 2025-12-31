@@ -15,7 +15,7 @@
 A productivity platform to import/export/share VS Code snippets & environment snapshots — with cloud sync and web management.
 
 
-## Links
+## Live Links
 - [![VSCode Marketplace](https://img.shields.io/badge/Marketplace-Snipzen-blue)](https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.jump-search)
 - [![Website](https://img.shields.io/badge/Website-snipzen.vercel.app-blue)](https://snipzen.com)
 
@@ -40,14 +40,14 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 ## Feature WorkFlows
 <p align="center">
-  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/authFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">1. Auth Feature Workflow</a></h2>
-  <img src="assets/authFlow_codesnippets.svg" width="90%" alt="Auth Feature Workflow" />
+  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/authFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">1. Auth Feature Workflow</a></h2>
+  <img src="assets/features/authFlow_codesnippets.svg" width="90%" alt="Auth Feature Workflow" />
 
-  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/snippetsFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">2. Snippets Feature Workflow</a></h2>
-  <img src="assets/snippetsFlow_codesnippets.svg" width="90%" alt="Snippets Feature Workflow" />
+  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/snippetsFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">2. Snippets Feature Workflow</a></h2>
+  <img src="assets/features/snippetsFlow_codesnippets.svg" width="90%" alt="Snippets Feature Workflow" />
 
-  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/searchFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">4. Search Feature Workflow</a></h2>
-  <img src="assets/searchFlow_codesnippets.svg" width="90%" alt="Search Feature Workflow" />
+  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/searchFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">4. Search Feature Workflow</a></h2>
+  <img src="assets/features/searchFlow_codesnippets.svg" width="90%" alt="Search Feature Workflow" />
 </p>
 
 
