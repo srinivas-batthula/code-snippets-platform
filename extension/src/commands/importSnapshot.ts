@@ -19,12 +19,49 @@ export async function registerImportSnapshot(context: vscode.ExtensionContext) {
                 log(`Failed to import snapshot: ${res.message || 'unknown error'}`, 'warn');
                 return;
             }
-
             const snapshot = res.snapshot;
 
+            // Show Snapshot Preview...
+            const previewMsg = `
+                Snapshot: ${snapshot.title}
+
+                Extensions: ${snapshot.extensions?.length || 0}
+                Settings: ${Object.keys(snapshot.settings || {}).length}
+                Keybindings: ${snapshot.keybindings?.length || 0}
+                `;
+            const proceed = await vscode.window.showInformationMessage(
+                previewMsg,
+                { modal: true },
+                'Continue',
+                'Cancel'
+            );
+            if (proceed !== 'Continue') return;
+
+            // User Preferences to Setup...
+            const options = await vscode.window.showQuickPick(
+                [
+                    { label: 'Install Extensions', picked: true },
+                    { label: 'Merge Settings', picked: true },
+                    { label: 'Merge Keybindings', picked: true }
+                ],
+                {
+                    canPickMany: true,
+                    title: 'Select snapshot import options to Setup'
+                }
+            );
+            if (!options) return;
+
+            log(`Installing your new setup...
+                    This may take a moment, Please Wait!`, 'info');
+
+            const shouldInstallExtensions = options.some(o => o.label === 'Install Extensions');
+            const shouldMergeSettings = options.some(o => o.label === 'Merge Settings');
+            const shouldMergeKeybindings = options.some(o => o.label === 'Merge Keybindings');
+
             let newExts: number = 0, skippedExts: number = 0;    // Newly installed & Skipped Extensions Count...
+
             // 2: Install Only Missing Extensions...
-            if (Array.isArray(snapshot.extensions) && snapshot.extensions.length > 0) {
+            if (shouldInstallExtensions && Array.isArray(snapshot.extensions) && snapshot.extensions.length > 0) {
                 const { newInstalls, skipped } = await installExtensions(snapshot.extensions);
                 newExts = newInstalls.length || 0;
                 skippedExts = skipped || 0;
@@ -34,7 +71,7 @@ export async function registerImportSnapshot(context: vscode.ExtensionContext) {
             // 3: Merge settings.json
             let newSettings: number = 0;
             const settingsPath = getUserSettingsPath();
-            if (snapshot.settings && typeof snapshot.settings === 'object') {
+            if (shouldMergeSettings && snapshot.settings && typeof snapshot.settings === 'object') {
                 const { count } = await mergeSettings(snapshot.settings, settingsPath);
                 newSettings = count;
                 // log(`Settings merged successfully!`, 'info');
@@ -43,7 +80,7 @@ export async function registerImportSnapshot(context: vscode.ExtensionContext) {
             // 4: Merge keybindings.json
             let newKeybindings: number = 0;
             const keybindingsPath = getUserKeybindingsPath();
-            if (snapshot.keybindings && Array.isArray(snapshot.keybindings)) {
+            if (shouldMergeKeybindings && snapshot.keybindings && Array.isArray(snapshot.keybindings)) {
                 const { count } = await mergeKeybindings(snapshot.keybindings, keybindingsPath);
                 newKeybindings = count;
                 // log(`Keybindings merged successfully!`, 'info');
