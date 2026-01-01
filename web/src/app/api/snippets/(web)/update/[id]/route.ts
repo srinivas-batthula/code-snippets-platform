@@ -8,10 +8,9 @@ import Snippet from '@/models/Snippet';
 
 const MAX_SNIPPET_SIZE = 10_000; // characters (10KB approx)
 
-
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
-        const id = params?.id;
+        const { id } = await context.params;
         if (!id) return NextResponse.json({ success: false, message: 'Missing `id`!' }, { status: 400 });
 
         const session = await getServerSession(authOptions);    // Checking if user is 'logged-in'...
@@ -69,7 +68,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
             publisherName: snippet.publisherName,
             publisherId: snippet.publisherId,
-            
+
             createdAt: snippet.createdAt,
             updatedAt: snippet.updatedAt,
         };

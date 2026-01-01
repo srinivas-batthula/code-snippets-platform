@@ -9,9 +9,9 @@ import Snapshot from '@/models/Snapshot';
 const MAX_SNAPSHOT_SIZE = 100_000; // ~100KB (covers 'settings.json + keybindings.json + workspaceConfig')...
 const MAX_EXTENSIONS_COUNT = 200;  // extensions limit ~200
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
-        const id = params?.id;
+        const { id } = await context.params;
         if (!id) {
             return NextResponse.json({ success: false, message: 'Missing `id`!' }, { status: 400 });
         }

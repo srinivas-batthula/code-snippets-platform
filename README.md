@@ -14,13 +14,13 @@
 
 A productivity platform to import/export/share VS Code snippets & environment snapshots — with cloud sync and web management.
 
-
 ## Live Links
+
 - [![VSCode Marketplace](https://img.shields.io/badge/Marketplace-Snipzen-blue)](https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.jump-search)
 - [![Website](https://img.shields.io/badge/Website-snipzen.vercel.app-blue)](https://snipzen.com)
 
-
 ## Key Features
+
 - **One-Click Snippet Import & Export** — Instantly move VS Code snippets across machines without manual setup
 
 - **VS Code Environment Snapshots** — Capture and restore your complete editor setup in seconds
@@ -33,33 +33,75 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 - **Native VSCode Extension** — Seamless, In-editor experience without breaking developer flow
 
-
 ## Usage
-#### gif's..
 
+<details>
+<summary><strong>▶️ View Usage Demos (GIFs)</strong></summary>
+<br>
 
-## Feature WorkFlows
+<!-- Add your GIFs here -->
 <p align="center">
-  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/authFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">1. Auth Feature Workflow</a></h2>
-  <img src="assets/features/authFlow_codesnippets.svg" width="90%" alt="Auth Feature Workflow" />
-
-  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/snippetsFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">2. Snippets Feature Workflow</a></h2>
-  <img src="assets/features/snippetsFlow_codesnippets.svg" width="90%" alt="Snippets Feature Workflow" />
-
-  <h2><a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/searchFlow_codesnippets.svg" target="_blank" rel="noopener noreferrer">4. Search Feature Workflow</a></h2>
-  <img src="assets/features/searchFlow_codesnippets.svg" width="90%" alt="Search Feature Workflow" />
+  <img src="assets/gifs/import-snippet.gif" width="80%" />
+  <br>
+  
+  <img src="assets/gifs/export-snapshot.gif" width="80%" />
 </p>
 
+</details>
+
+## Feature Workflows
+
+<details>
+<summary><strong>▶️ View Feature Workflows (Architecture Diagrams)</strong></summary>
+<br>
+
+#### 1. Auth Feature Workflow
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/authFlow_codesnippets.svg" target="_blank">
+    <img src="assets/features/authFlow_codesnippets.svg" width="90%" alt="Auth Feature Workflow" />
+  </a>
+</p>
+
+---
+
+#### 2. Snippets Feature Workflow
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/snippetsFlow_codesnippets.svg" target="_blank">
+    <img src="assets/features/snippetsFlow_codesnippets.svg" width="90%" alt="Snippets Feature Workflow" />
+  </a>
+</p>
+
+---
+
+#### 3. Search Feature Workflow
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/searchFlow_codesnippets.svg" target="_blank">
+    <img src="assets/features/searchFlow_codesnippets.svg" width="90%" alt="Search Feature Workflow" />
+  </a>
+</p>
+
+</details>
+
+## Real-World Use Cases
+
+- **For Teams:** Instantly spin up a full development environment and share setups with teammates
+- **For Individual Developers:** Sync personal snippets and dev environments across multiple machines effortlessly
+- **For Students & Communities:** Distribute ready-to-use VS Code setups for courses, workshops, and learning groups
+- **For Freelancers & Consultants:** Maintain and switch between multiple client-specific VS Code setups easily
 
 ## Tech Stack
--   **Web:**  Next.js, Tailwind CSS, Next-Auth
--   **Extension:**  TypeScript, vscode-engine
--   **Database:**  MongoDB Atlas + Mongoose ODM
--   **API Docs:**  Swagger Docs
--   **Deployment:**  Vercel, VSCode Marketplace, GitHub-Actions(CI/CD)
 
+- **Web:** Next.js, Tailwind CSS, Next-Auth
+- **Extension:** TypeScript, vscode-engine
+- **Database:** MongoDB Atlas + Mongoose ODM
+- **API Docs:** Swagger Docs
+- **Deployment:** Vercel, VSCode Marketplace, GitHub-Actions(CI/CD)
 
 ## Project Structure
+
 ```
 snipzen/
 ├── .github/workflows/
@@ -88,23 +130,22 @@ snipzen/
 └── Readme.md
 ```
 
-
 ## Setup & Contribute
+
 - Visit [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-
 ## License
+
 This project is licensed under the MIT License - see the
 [LICENSE](./LICENSE) file for details.
 
-
 ## Contact / Support
-- [![Website](https://img.shields.io/badge/Website-Srinivas%20Batthula-blue?style=flat&logo=googlechrome&logoColor=white)](https://srinivas-batthula.me)		[![Email](https://img.shields.io/badge/Email-Srinivas%20Batthula-red?style=flat&logo=gmail&logoColor=white)](mailto:srinivasbatthula05.official@gmail.com)
 
-- [![Website](https://img.shields.io/badge/Website-Himanshu%20Bijja-blue?style=flat&logo=googlechrome&logoColor=white)](https://himanshubijja.me)		[![Email](https://img.shields.io/badge/Email-Himanshu%20Bijja-red?style=flat&logo=gmail&logoColor=white)](mailto:himanshubijja.official@gmail.com)
+- [![Website](https://img.shields.io/badge/Website-Srinivas%20Batthula-blue?style=flat&logo=googlechrome&logoColor=white)](https://srinivas-batthula.me) [![Email](https://img.shields.io/badge/Email-Srinivas%20Batthula-red?style=flat&logo=gmail&logoColor=white)](mailto:srinivasbatthula05.official@gmail.com)
 
-
+- [![Website](https://img.shields.io/badge/Website-Himanshu%20Bijja-blue?style=flat&logo=googlechrome&logoColor=white)](https://himanshubijja.me) [![Email](https://img.shields.io/badge/Email-Himanshu%20Bijja-red?style=flat&logo=gmail&logoColor=white)](mailto:himanshubijja.official@gmail.com)
 
 ## Contributors
+
 - **Srinivas Batthula [@srinivas-batthula](https://github.com/srinivas-batthula)**
 - **Himanshu Bijja [@himanshubijja](https://github.com/himanshubijja)**

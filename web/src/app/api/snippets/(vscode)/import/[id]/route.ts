@@ -5,9 +5,9 @@ import Snippet from '@/models/Snippet';
 import mongoose from 'mongoose';
 
 // This `api-endpoint` is used by both 'website & Extension' to get a snippet by ID...
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
-        const id = await params?.id;
+        const { id } = await context.params;
         if (!id) return NextResponse.json({ ok: false, message: 'Missing `id` of Snippet!' }, { status: 400 });
 
         await connectDB();

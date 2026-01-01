@@ -5,9 +5,9 @@ import Snapshot from '@/models/Snapshot';
 import mongoose from 'mongoose';
 
 // This `api-endpoint` is used by both 'website & Extension' to get a snapshot by ID...
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
-        const id = params?.id;
+        const { id } = await context.params;
         if (!id) {
             return NextResponse.json({ ok: false, message: 'Missing `id` of Snapshot!' }, { status: 400 });
         }
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
             publisherName: snapshot.publisherName,
             publisherId: snapshot.publisherId,
-            
+
             createdAt: snapshot.createdAt,
             updatedAt: snapshot.updatedAt,
         };
