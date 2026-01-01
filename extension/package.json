@@ -1,7 +1,7 @@
 {
   "name": "codesnippets",
   "displayName": "CodeSnippets",
-  "description": "One-click export/import VSCode dev environment snapshots",
+  "description": "One-click export/import VSCode dev environment snapshots & Code Snippets",
   "publisher": "srinivas-batthula",
   "repository": {
     "type": "git",

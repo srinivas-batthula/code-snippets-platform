@@ -51,7 +51,6 @@ export async function registerExportSnapshot(context: vscode.ExtensionContext) {
                 },
             });
             if (!title) { // user canceled input
-                // log('Upload Cancelled!', 'warn');
                 return;
             }
 
@@ -78,7 +77,7 @@ export async function registerExportSnapshot(context: vscode.ExtensionContext) {
                 log(`Upload failed: ${res.message}`, 'warn');
             }
         } catch (err: any) {
-            log(`Export snapshot error: ${err.message || 'unknown error'}`, 'error');
+            log(`Export Snapshot Error: ${err.message || 'unknown error'}`, 'error');
         }
     });
     context.subscriptions.push(disposable);

@@ -5,8 +5,6 @@ import { log } from '../utils/logger';
 
 export async function registerImportSnippet(context: vscode.ExtensionContext) {
     const disposable = vscode.commands.registerCommand('codesnippets.importSnippet', async (args?: { id?: string }) => {
-        const editor = vscode.window.activeTextEditor;
-
         try {
             let id = args?.id;  // Default value of `id`...
             if (!id) {
@@ -23,6 +21,8 @@ export async function registerImportSnippet(context: vscode.ExtensionContext) {
             const snippet = res.snippet;
             const header = buildHeaderComment(snippet);
             const contentToInsert = `${header}${snippet?.code}\n\n\n`;
+
+            const editor = vscode.window.activeTextEditor;
 
             // 1: Editor exists → Append at Top of file
             if (editor) {
