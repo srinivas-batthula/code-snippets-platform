@@ -7,6 +7,7 @@ Before contributing, make sure you have the following installed:
 - [Node.js](https://nodejs.org/en)
 - [NPM](https://www.npmjs.com)
 - [VS Code](https://code.visualstudio.com)
+- [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install)
 
 
 ## 2. Installation
@@ -31,10 +32,12 @@ Configure your environment:
 ## 4. Run / Start
 Run the project locally:
 
+- Run Redis Image via DockerDesktop
+```docker run -d --name snipzen-redis -p 6379:6379 redis:7-alpine```
 - Run Web-Server (Next.js)
-```npm run dev```
+```./web>> npm run dev```
 - Run VSCode Extension
-```npm run build```
+```./extension>> npm run compile```
 **Press   *~ F5*   in VSCode to open dev-environment**
 
 

@@ -3,9 +3,12 @@ import { NextResponse } from "next/server";
 import mongoose from 'mongoose';
 import { connectDB } from "@/lib/dbConnect";
 import Snippet from "@/models/Snippet";
+import { redis } from "@/lib/redis";
+import { getSearchCacheKey, getSearchCache, setSearchCache } from "@/utils/redis";
 
 // GetAll `code-snippets` with pagination, filters & search...
 //*--- `Cursor-based pagination` for 'Infinite Scrolling' ---*//
+// Req -> Try in Cache -> If not in Cache, Fetch from DB -> Response...
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url); // Search Query-Params (`/api/snippets/getAll?id=..&user=..&language=..&tag=..&search=..&cursor=..`)
@@ -18,6 +21,15 @@ export async function GET(req: Request) {
         const username = searchParams.get("user");
         const id = searchParams.get("id"); // Snippet-ID...
 
+        // 1. Try Cache in Redis...
+        const cacheKey = getSearchCacheKey('snippets', req);
+        
+        const cached = await getSearchCache(redis, cacheKey);
+        if (cached) {
+            return NextResponse.json(cached, { status: 200 });
+        }
+
+        // 2. Fetch from DB, If Not Found in Cache...
         await connectDB();
 
         // Build `match`--{query-obj} stage...
@@ -100,33 +112,38 @@ export async function GET(req: Request) {
             ? `${snippetsData[snippetsData.length - 1].createdAt.toISOString()}_${snippetsData[snippetsData.length - 1]._id.toString()}`
             : null;
 
-        return NextResponse.json(
-            {
-                success: true,
-                snippets: snippetsData.map((s) => ({
-                    id: s._id.toString(),
-                    title: s.title,
-                    description: s.description || null,
+        const safe = {
+            success: true,
+            snippets: snippetsData.map((s) => ({
+                id: s._id.toString(),
+                title: s.title,
+                description: s.description || null,
 
-                    code: s.code,
-                    language: s.lang,
-                    tags: s.tags,
+                code: s.code,
+                language: s.lang,
+                tags: s.tags,
 
-                    createdAt: s.createdAt,
-                    updatedAt: s.updatedAt,
+                createdAt: s.createdAt,
+                updatedAt: s.updatedAt,
 
-                    publisherId: s.publisherId,
-                    publisherName: s.publisherName || "Unknown"
-                })),
-                pagination: {
-                    totalCount,
-                    limit,
-                    totalPages: Math.ceil(totalCount / limit),
+                publisherId: s.publisherId,
+                publisherName: s.publisherName || "Unknown"
+            })),
+            pagination: {
+                totalCount,
+                limit,
+                totalPages: Math.ceil(totalCount / limit),
 
-                    hasNextPage,
-                    nextCursor,
-                },
+                hasNextPage,
+                nextCursor,
             },
+        };
+
+        // Store in Redis (bounded)
+        await setSearchCache(redis, cacheKey, safe);
+
+        return NextResponse.json(
+            safe,
             { status: 200 }
         );
     } catch (err: any) {

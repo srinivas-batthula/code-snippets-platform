@@ -22,11 +22,21 @@ export async function search(type: 'Snippets' | 'Snapshots', query: string, curs
             return { success: false, message: data.message || `Failed to Search ${type}!` };
         }
 
-        const items = (data[type === 'Snapshots' ? 'snapshots' : 'snippets'] ?? []).map((item: any) => ({
-            label: item.title || 'Untitled',
-            detail: `By: ${item.publisherName}  |  Published-On: ${new Date(item.createdAt).toLocaleDateString()}`,
-            id: item.id
-        }));
+        const items = (data[type === 'Snapshots' ? 'snapshots' : 'snippets'] ?? []).map((item: any) => {
+            if (type === 'Snapshots') {
+                return {
+                    label: item.title || 'Untitled',
+                    detail: `By: ${item.publisherName}  |  Published-On: ${new Date(item.createdAt).toLocaleDateString()} | ${item.extensionsCount}-Extensions | ${item.settingsCount}-Settings | ${item.keybindingsCount}-Keybindings`,
+                    id: item.id
+                };
+            } else {
+                return {
+                    label: item.title || 'Untitled',
+                    detail: `By: ${item.publisherName}  |  Published-On: ${new Date(item.createdAt).toLocaleDateString()}`,
+                    id: item.id
+                };
+            }
+        });
 
         return { success: true, items, pagination: data.pagination };
     }
