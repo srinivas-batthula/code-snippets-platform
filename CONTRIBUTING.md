@@ -38,7 +38,7 @@ Run the project locally:
 ```./web>> npm run dev```
 - Run VSCode Extension
 ```./extension>> npm run compile```
-**Press   *~ F5*   in VSCode to open dev-environment**
+- **Press   *~ F5*   in VSCode to open dev-environment**
 
 
 ## 5. Contribute / Issues
