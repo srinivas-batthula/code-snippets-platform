@@ -181,7 +181,7 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 ## 🛠️ Tech Stack
 
-- **Web:** Next.js, Tailwind CSS, Next-Auth
+- **Web:** Next.js, Tailwind CSS, Next-Auth, Redis
 - **Extension:** TypeScript, vscode-engine
 - **Database:** MongoDB Atlas + Mongoose ODM
 - **API Docs:** Swagger Docs
