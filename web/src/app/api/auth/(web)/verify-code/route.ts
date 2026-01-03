@@ -55,7 +55,7 @@ export async function POST(request: Request) {
             success: false,
             message: "Incorrect verification code"
         }, {
-            status: 500
+            status: 400
         });
         //Check code and expiry date
         //if code and time not expired save user
