@@ -17,7 +17,7 @@ export async function setSearchCache(redis: any, cacheKey: string, data: any) {
         await redis.zadd(CACHE_INDEX_KEY, now, cacheKey);
 
         // Set / refresh TTL for index key
-        await redis.expire(CACHE_INDEX_KEY, CACHE_TTL_SECONDS);
+        await redis.expire(CACHE_INDEX_KEY, CACHE_TTL_SECONDS * 2);
 
         // 3. Enforce max size
         const size = await redis.zcard(CACHE_INDEX_KEY);
