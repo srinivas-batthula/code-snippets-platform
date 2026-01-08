@@ -108,7 +108,7 @@ export function getIntroPanelHtml(username: string): string {
   <body>
     <div class="container">
       <h1>Hello, ${username}!</h1>
-      <p>Welcome to <strong onclick="sendUrl('${API_BASE}')" style="text-decoration: underline; cursor: pointer;">CodeSnippets</strong>.</p>
+      <p>Welcome to <strong onclick="sendUrl('${API_BASE}')" style="text-decoration: underline; cursor: pointer;">SnipZen</strong>.</p>
 
       <div class="cmd-list">
         <h2>Quick Commands</h2>
@@ -144,7 +144,7 @@ export function getIntroPanelHtml(username: string): string {
 
       </div>
 
-      <p class="footer-text">~ Support Team <strong style="color: #4ea1ff;">-CodeSnippets</strong></p>
+      <p class="footer-text">~ Support Team <strong style="color: #4ea1ff;">-SnipZen</strong></p>
     </div>
 
     <script>

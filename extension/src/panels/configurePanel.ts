@@ -188,8 +188,8 @@ export function getConfigurePanelHtml(): string {
 </head>
 <body>
   <div class="container">
-    <h2>Connect to <span style="color: #4ea1ff;">~CodeSnippets</span></h2>
-    <p>Link your account to use CodeSnippets features</p>
+    <h2>Connect to <span style="color: #4ea1ff;">~SnipZen</span></h2>
+    <p>Link your account to use SnipZen's features</p>
 
     <div class="progress">
       <div class="progress-bar" id="progress-bar"></div>
