@@ -14,12 +14,12 @@
 
 A productivity platform to import/export/share VS Code snippets & environment snapshots — with cloud sync and web management.
 
-## Live Links
+## 🔗 Live Links
 
 - [![VSCode Marketplace](https://img.shields.io/badge/Marketplace-Snipzen-blue)](https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.jump-search)
 - [![Website](https://img.shields.io/badge/Website-snipzen.vercel.app-blue)](https://snipzen.com)
 
-## Key Features
+## ✨ Key Features
 
 - **One-Click Snippet Import & Export** — Instantly move VS Code snippets across machines without manual setup
 
@@ -33,7 +33,7 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 - **Native VSCode Extension** — Seamless, In-editor experience without breaking developer flow
 
-## Usage
+## 🚀 Usage
 
 ### 1. Open Menu / Intro panel
 
@@ -136,7 +136,7 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 ![Preview](./assets/usages/search_cmd.gif)
 
 
-## Feature Workflows
+## 🧬 Feature Workflows
 
 <details>
 <summary><strong>▶️ View Feature Workflows (Architecture Diagrams)</strong></summary>
@@ -172,14 +172,14 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 </details>
 
-## Real-World Use Cases
+## 🌍 Real-World Use Cases
 
 - **For Teams:** Instantly spin up a full development environment and share setups with teammates
 - **For Individual Developers:** Sync personal snippets and dev environments across multiple machines effortlessly
 - **For Students & Communities:** Distribute ready-to-use VS Code setups for courses, workshops, and learning groups
 - **For Freelancers & Consultants:** Maintain and switch between multiple client-specific VS Code setups easily
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 - **Web:** Next.js, Tailwind CSS, Next-Auth
 - **Extension:** TypeScript, vscode-engine
@@ -187,7 +187,7 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 - **API Docs:** Swagger Docs
 - **Deployment:** Vercel, VSCode Marketplace, GitHub-Actions(CI/CD)
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 snipzen/
@@ -217,22 +217,22 @@ snipzen/
 └── Readme.md
 ```
 
-## Setup & Contribute
+## 🤝 Setup / Installation & Contribute
 
 - Visit [CONTRIBUTING.md](./CONTRIBUTING.md)
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the
 [LICENSE](./LICENSE) file for details.
 
-## Contact / Support
+## 📬 Contact / Support
 
 - [![Website](https://img.shields.io/badge/Website-Srinivas%20Batthula-blue?style=flat&logo=googlechrome&logoColor=white)](https://srinivas-batthula.me) [![Email](https://img.shields.io/badge/Email-Srinivas%20Batthula-red?style=flat&logo=gmail&logoColor=white)](mailto:srinivasbatthula05.official@gmail.com)
 
 - [![Website](https://img.shields.io/badge/Website-Himanshu%20Bijja-blue?style=flat&logo=googlechrome&logoColor=white)](https://himanshubijja.me) [![Email](https://img.shields.io/badge/Email-Himanshu%20Bijja-red?style=flat&logo=gmail&logoColor=white)](mailto:himanshubijja.official@gmail.com)
 
-## Contributors
+## 👥 Contributors
 
 - **Srinivas Batthula [@srinivas-batthula](https://github.com/srinivas-batthula)**
 - **Himanshu Bijja [@himanshubijja](https://github.com/himanshubijja)**
