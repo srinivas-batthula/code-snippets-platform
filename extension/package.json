@@ -1,11 +1,11 @@
 {
-  "name": "codesnippets",
-  "displayName": "CodeSnippets",
+  "name": "snipzen",
+  "displayName": "SnipZen",
   "description": "One-click export/import VSCode dev environment snapshots & Code Snippets",
   "publisher": "srinivas-batthula",
   "repository": {
     "type": "git",
-    "url": "https://github.com/HimanshuBijja/code-snippets-platform"
+    "url": "https://github.com/srinivas-batthula/code-snippets-platform"
   },
   "version": "0.0.1",
   "engines": {
@@ -20,19 +20,22 @@
   "keywords": [
     "setup",
     "exchange dev-env",
-    "code-snippets"
+    "environments",
+    "code-snippets",
+    "code snippets",
+    "SnipZen"
   ],
   "icon": "src/assets/icon.png",
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "CodeSnippets : Settings",
+      "title": "SnipZen : Settings",
       "properties": {
         "codesnippets.apiBaseUrl": {
           "type": "string",
           "default": "http://localhost:3000",
-          "description": "Base URL for CodeSnippets backend API"
+          "description": "Base URL for SnipZen backend API"
         },
         "codesnippets.secretKey": {
           "type": "string",
@@ -41,46 +44,46 @@
         },
         "codesnippets.extensionName": {
           "type": "string",
-          "default": "CodeSnippets"
+          "default": "SnipZen"
         }
       }
     },
     "commands": [
       {
         "command": "codesnippets.intro",
-        "title": "CodeSnippets: Intro"
+        "title": "SnipZen: Intro"
       },
       {
         "command": "codesnippets.login",
-        "title": "CodeSnippets: Login"
+        "title": "SnipZen: Login"
       },
       {
         "command": "codesnippets.logout",
-        "title": "CodeSnippets: Logout"
+        "title": "SnipZen: Logout"
       },
       {
         "command": "codesnippets.exportSnippet",
-        "title": "CodeSnippets: Export Code Snippet"
+        "title": "SnipZen: Export Code Snippet"
       },
       {
         "command": "codesnippets.importSnippet",
-        "title": "CodeSnippets: Import Code Snippet"
+        "title": "SnipZen: Import Code Snippet"
       },
       {
         "command": "codesnippets.exportSnapshot",
-        "title": "CodeSnippets: Export Dev-Env Snapshot"
+        "title": "SnipZen: Export Dev-Env Snapshot"
       },
       {
         "command": "codesnippets.importSnapshot",
-        "title": "CodeSnippets: Import Dev-Env Snapshot"
+        "title": "SnipZen: Import Dev-Env Snapshot"
       },
       {
         "command": "codesnippets.openSnapshotFiles",
-        "title": "CodeSnippets: Open Snapshot Files"
+        "title": "SnipZen: Open Snapshot Files"
       },
       {
         "command": "codesnippets.search",
-        "title": "CodeSnippets: Search"
+        "title": "SnipZen: Search"
       }
     ],
     "menus": {
@@ -125,8 +128,8 @@
       },
       {
         "command": "codesnippets.importSnapshot",
-        "key": "ctrl+shift+p",
-        "mac": "cmd+shift+p"
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t"
       },
       {
         "command": "codesnippets.openSnapshotFiles",

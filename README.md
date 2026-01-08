@@ -35,19 +35,106 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 ## Usage
 
-<details>
-<summary><strong>▶️ View Usage Demos (GIFs)</strong></summary>
-<br>
+### 1. Open Menu / Intro panel
 
-<!-- Add your GIFs here -->
-<p align="center">
-  <img src="assets/gifs/import-snippet.gif" width="80%" />
-  <br>
-  
-  <img src="assets/gifs/export-snapshot.gif" width="80%" />
-</p>
+#### Through Command Palette
 
-</details>
+1. Open Command Palette. (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>)
+2. Run **"SnipZen: intro"**.
+3. You can perform all tasks from this panel.
+
+#### Through Keyboard Shortcut
+
+1. Hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd>  
+   ( <kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>M</kbd> on macOS )
+
+![Preview](./assets/usages/intro_panel.gif)
+
+### 2. Export a code snippet
+
+#### Through Editor Context Menu
+
+1. Select the code in the editor.
+2. Right-click and choose **"SnipZen: Export Code Snippet"**.
+3. Confirm the export.
+
+#### Through Command Palette
+
+1. Select the code in the editor.
+2. Open Command Palette. (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>)
+3. Run `SnipZen: Export Code Snippet`.
+
+#### Through Keyboard Shortcut
+
+1. Select the code in the editor.
+2. Hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>  
+   ( <kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>E</kbd> on macOS )
+
+![Preview](./assets/usages/export_snippet.gif)
+
+
+### 3. Import a code snippet
+
+#### Through Command Palette
+
+1. Open Command Palette.
+2. Run `SnipZen: Import Code Snippet`.
+3. Enter Snippet-ID to import.
+
+#### Through Keyboard Shortcut
+
+1. Hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd>  
+   ( <kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>I</kbd> on macOS )
+2. Select the snippet to import.
+
+![Preview](./assets/usages/import_snippet.gif)
+
+### 4. Export Dev-Environment Snapshot
+
+#### Through Command Palette
+
+1. Open Command Palette.
+2. Run `SnipZen: Export Dev-Env Snapshot`.
+3. Confirm snapshot export.
+
+#### Through Keyboard Shortcut
+
+1. Hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd>  
+   ( <kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>X</kbd> on macOS )
+
+![Preview](./assets/usages/export_snapshot.gif)
+
+### 5. Import Dev-Environment Snapshot
+
+#### Through Command Palette
+
+1. Open Command Palette.
+2. Run `SnipZen: Import Dev-Env Snapshot`.
+3. Enter Snapshot-ID to import.
+
+#### Through Keyboard Shortcut
+
+1. Hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd>  
+   ( <kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>T</kbd> on macOS )
+
+![Preview](./assets/usages/import_snapshot.gif)
+
+### 6. Search for Snippets
+
+#### Through Command Palette
+
+1. Hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> ( <kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>P</kbd> on macOS )
+2. Run `SnipZen: Search`.
+3. Type your query and press <kbd>Enter</kbd>.
+
+#### Through Keyboard Shortcut
+
+1. Hit <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd>  
+   ( <kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>S</kbd> on macOS )
+2. Type your query and press <kbd>Enter</kbd>.
+
+![Preview](./assets/usages/search_cmd.gif)
+
 
 ## Feature Workflows
 
