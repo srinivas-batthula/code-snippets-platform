@@ -255,9 +255,9 @@ export default function CodeEditor({
           onSubmit={form.handleSubmit(handleFormSubmit)}
           className="space-y-6"
         >
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-6 w-full">
             {/* Left Column - Form Fields */}
-            <div className="space-y-6 max-w-md w-full">
+            <div className="space-y-6 lg:max-w-md w-full min-w-0">
               {/* Title Field */}
               <div className="flex flex-row gap-4 w-full ">
                 <FormField
@@ -423,7 +423,7 @@ export default function CodeEditor({
             </div>
 
             {/* Right Column - Code Editor */}
-            <div className="space-y-4 w-full ">
+            <div className="space-y-4 w-full min-w-0">
               <FormField
                 control={form.control}
                 name="code"

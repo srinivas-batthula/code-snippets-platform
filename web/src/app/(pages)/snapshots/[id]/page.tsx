@@ -319,7 +319,7 @@ export default function SnapshotDetailPage() {
 
         {/* Meta info */}
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground mb-2">
-          <span>
+          <span onClick={()=> router.push(`/profile?username=${snapshot.publisherName}`)} className="cursor-pointer hover:text-blue-400">
             <strong>Author:</strong> {snapshot.publisherName}
           </span>
           <span>

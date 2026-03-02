@@ -285,7 +285,7 @@ export default function SnippetDetailPage() {
           {/* Author and Date Info */}
 
         <div className="flex items-center justify-around gap-4 text-sm text-muted-foreground mb-6 p-3 bg-muted/30 rounded-lg">
-            <span>
+            <span onClick={()=> router.push(`/profile?username=${snippet.publisherName}`)} className="cursor-pointer hover:text-blue-400">
               <strong>Author:</strong> {snippet.publisherName}
             </span>
             {/* <span>•</span> */}
@@ -338,7 +338,7 @@ export default function SnippetDetailPage() {
 
       {/* Edit Snippet Modal */}
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-full max-w-[90vw] lg:max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Code-Snippet</DialogTitle>
           </DialogHeader>

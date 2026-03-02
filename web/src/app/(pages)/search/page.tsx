@@ -729,8 +729,8 @@ export default function SearchPage() {
                     )}
                   </CardContent>
 
-                  <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
-                    <span>By {snippet.publisherName}</span>
+                  <CardFooter onClick={()=> router.push(`/profile?username=${snippet.publisherName}`)} className="flex justify-between items-center text-xs text-muted-foreground cursor-cell">
+                    <span className="hover:text-blue-400">By {snippet.publisherName}</span>
                     <span>{formatDate(snippet.createdAt)}</span>
                   </CardFooter>
                 </Card>
