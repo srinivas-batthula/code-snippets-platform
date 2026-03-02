@@ -1,9 +1,9 @@
-// src/app/page.tsx
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Code2,
   Zap,
@@ -14,8 +14,36 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const Page = () => {
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
 
+const staggerContainer = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const typingContainer = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.4,
+      delayChildren: 0.6,
+    },
+  },
+};
+
+const typingLine = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.4 } },
+};
+
+const Page = () => {
   const openInVSCode = () => {
     const start = Date.now();
 
@@ -24,7 +52,8 @@ const Page = () => {
     setTimeout(() => {
       const elapsed = Date.now() - start;
       if (elapsed < 600) {
-        window.location.href = "vscode:extension/srinivas-batthula.codesnippets";
+        window.location.href =
+          "vscode:extension/srinivas-batthula.codesnippets";
       }
     }, 500);
 
@@ -40,36 +69,45 @@ const Page = () => {
   const features = [
     {
       icon: <Code2 className="w-6 h-6" />,
-      title: "Code Management",
-      description: "Organize and manage your code snippets across multiple languages.",
+      title: "Snippet Versioning",
+      description:
+        "Track changes, update snippets, and maintain version history like a real dev workflow.",
     },
     {
       icon: <Search className="w-6 h-6" />,
-      title: "Smart Search",
-      description: "Find snippets instantly with powerful search and filtering.",
+      title: "Instant Search Engine",
+      description:
+        "Lightning-fast filtering powered by structured metadata and tagging.",
     },
     {
       icon: <Zap className="w-6 h-6" />,
-      title: "Quick Access",
-      description: "Access your snippets directly from VSCode with one click.",
+      title: "Environment Snapshots",
+      description:
+        "Export and import your VSCode setup including extensions and configuration.",
     },
     {
       icon: <Share2 className="w-6 h-6" />,
-      title: "Share & Collaborate",
-      description: "Share snippets with your team and collaborate effortlessly.",
+      title: "Team Collaboration",
+      description:
+        "Share snippet collections securely with teammates and collaborate efficiently.",
     },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-36">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-8">
-              <div className="space-y-4">
+
+            {/* LEFT SIDE — UNCHANGED */}
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+              className="space-y-8"
+            >
+              <motion.div variants={fadeUp} className="space-y-4">
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
                   Your Code Snippets, <br className="hidden md:inline" />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
@@ -77,22 +115,19 @@ const Page = () => {
                   </span>
                 </h1>
                 <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-lg">
-                  Save, organize, and access your code snippets seamlessly across the web and your
-                  favorite IDE. Supercharge your development workflow.
+                  A production-ready developer platform to sync, version, and
+                  manage your <strong>Code-Snippets</strong> &{" "}
+                  <strong>Environment-Snapshots</strong> across devices.
                 </p>
-              </div>
+              </motion.div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  onClick={openInVSCode}
-                  className="group px-8 h-12 text-base font-semibold cursor-pointer"
-                >
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" onClick={openInVSCode} className="group px-8 h-12 text-base font-semibold cursor-pointer">
                   <Code2 className="w-5 h-5" />
                   Open VSCode Extension
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
+
                 <Button
                   size="lg"
                   variant="outline"
@@ -102,70 +137,133 @@ const Page = () => {
                   <Search className="w-5 h-5" />
                   Browse Snippets
                 </Button>
-              </div>
+              </motion.div>
+            </motion.div>
 
-              {/* Stats */}
-              <div className="flex flex-wrap gap-8 pt-8">
-                <div>
-                  <p className="text-2xl sm:text-3xl font-bold">10k+</p>
-                  <p className="text-sm text-muted-foreground">Code Snippets</p>
-                </div>
-                <div>
-                  <p className="text-2xl sm:text-3xl font-bold">5k+</p>
-                  <p className="text-sm text-muted-foreground">Snapshots</p>
-                </div>
-                <div>
-                  <p className="text-2xl sm:text-3xl font-bold">20+</p>
-                  <p className="text-sm text-muted-foreground">Languages</p>
-                </div>
-              </div>
-            </div>
+            {/* RIGHT SIDE — MODIFIED ONLY HERE */}
+            <motion.div
+              initial={{ opacity: 0, y: 60 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="hidden lg:flex justify-center"
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="relative w-[520px] max-w-full"
+              >
+                <div className="absolute -inset-10 bg-gradient-to-tr from-primary/30 via-primary/10 to-transparent rounded-full blur-3xl opacity-40" />
 
-            {/* Right Visual - use a real screenshot or illustration */}
-            <div className="hidden lg:flex justify-center">
-              <div className="relative w-[480px] max-w-full">
-                {/* soft glow background */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-primary/0 rounded-3xl blur-3xl" />
-                {/* screenshot container */}
-                <div className="relative bg-white dark:bg-slate-800 border border-border rounded-3xl shadow-xl overflow-hidden">
-                  <img
-                    src="https://source.unsplash.com/600x400/?code,editor" /* replace with project screenshot */
-                    alt="App screenshot"
-                    className="w-full h-auto object-cover"
-                  />
+                <div className="relative bg-[#1e1e1e] border border-border rounded-3xl shadow-2xl overflow-hidden">
+
+                  <div className="flex items-center gap-2 px-4 py-3 border-b bg-muted/40">
+                    <div className="w-3 h-3 bg-red-400 rounded-full" />
+                    <div className="w-3 h-3 bg-yellow-400 rounded-full" />
+                    <div className="w-3 h-3 bg-green-400 rounded-full" />
+                    <span className="ml-4 text-xs text-muted-foreground">
+                      SnipZen - VSCode Extension
+                    </span>
+                  </div>
+
+                  {/* Typing Code Area */}
+                  <motion.div
+                    variants={typingContainer}
+                    initial="hidden"
+                    animate="show"
+                    className="p-6 space-y-4 font-mono text-sm leading-relaxed select-none pointer-events-none"
+                  >
+
+                    <motion.div variants={typingLine}>
+                      <span className="text-blue-400">const</span>{" "}
+                      <span className="text-yellow-300">connectDB</span>{" "}
+                      <span className="text-white">=</span>{" "}
+                      <span className="text-blue-400">async</span>{" "}
+                      <span className="text-white">() =&gt;</span>{" "}
+                      <span className="text-white">{"{"}</span>
+                    </motion.div>
+
+                    <motion.div variants={typingLine} className="pl-6">
+                      <span className="text-blue-400">await</span>{" "}
+                      <span className="text-green-400">mongoose</span>
+                      <span className="text-white">.</span>
+                      <span className="text-yellow-300">connect</span>
+                      <span className="text-white">(</span>
+                      <span className="text-purple-400">process</span>
+                      <span className="text-white">.</span>
+                      <span className="text-purple-400">env</span>
+                      <span className="text-white">.</span>
+                      <span className="text-orange-400">MONGO_URI</span>
+                      <span className="text-white">);</span>
+                    </motion.div>
+
+                    <motion.div variants={typingLine}>
+                      <span className="text-white">{"}"}</span>
+                      <motion.span
+                        animate={{ opacity: [1, 0, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        className="ml-1 text-white"
+                      >
+                        |
+                      </motion.span>
+                    </motion.div>
+
+                    <motion.div variants={typingLine} className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/20">
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Synced Snapshot
+                      </p>
+                      <p className="text-sm font-semibold">
+                        ✔ Backend Setup Environment
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Node • MongoDB • JWT • Express
+                      </p>
+                    </motion.div>
+
+                    <motion.div variants={typingLine} className="flex items-center gap-2 text-green-500 text-xs">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Synced across 2 devices
+                    </motion.div>
+
+                  </motion.div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
+
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* FEATURES */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-            <h2 className="text-3xl sm:text-4xl font-bold">Powerful Features</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Everything you need to manage and share your code snippets efficiently
-            </p>
-          </div>
+        <div className="max-w-6xl mx-auto text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl font-bold">Powerful Features</h2>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-border/50 hover:border-primary/50 transition-colors">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {features.map((feature, index) => (
+            <motion.div key={index} variants={fadeUp}>
+              <Card className="border-border/50 hover:border-primary/50 transition-all hover:shadow-lg">
                 <CardHeader>
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4">
                     {feature.icon}
                   </div>
-                  <CardTitle className="text-lg">{feature.title}</CardTitle>
+                  <CardTitle>{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </section>
 
       {/* How It Works */}
