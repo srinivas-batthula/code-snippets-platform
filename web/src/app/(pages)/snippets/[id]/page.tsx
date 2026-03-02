@@ -13,6 +13,13 @@ import PrismHighlighter from "@/components/PrismHighlighter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, Copy, Check } from "lucide-react";
 import { getLanguageDisplayName } from "@/types/languages";
+import CodeEditor from "@/components/CodeEditor";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Snippet {
   id: string;
@@ -68,6 +75,7 @@ export default function SnippetDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [copiedId, setCopiedId] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const id = params.id as string;
 
@@ -296,7 +304,7 @@ export default function SnippetDetailPage() {
             Browse More Snippets
           </Button>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap justify-end">
             <Button
               variant="outline"
               onClick={() => {
@@ -320,9 +328,37 @@ export default function SnippetDetailPage() {
                 More "{snippet.tags[0]}" Snippets
               </Button>
             )}
+
+            <Button variant="default" onClick={() => setIsEditOpen(true)}>
+              Edit Snippet
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* Edit Snippet Modal */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Code-Snippet</DialogTitle>
+          </DialogHeader>
+          <CodeEditor
+            key={snippet.id}
+            snippetId={snippet.id}
+            initialData={{
+              title: snippet.title,
+              description: snippet.description,
+              language: snippet.language as any,
+              code: snippet.code,
+              tags: snippet.tags,
+            }}
+            onSubmit={async () => {
+              setIsEditOpen(false);
+              setTimeout(() => router.refresh(), 1000);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
