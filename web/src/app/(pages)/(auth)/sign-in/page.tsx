@@ -115,7 +115,7 @@ function SignInForm() {
   return (
     <section className="flex flex-col items-center py-24 h-screen justify-center">
       <div className="border-2 p-8 rounded-xl w-full max-w-md bg-white  outline-1 outline-black/10 shadow-lg flex flex-col">
-        <h1 className="text-center text-2xl font-bold mb-12">Login</h1>
+        <h1 className="text-center text-2xl font-bold mb-12 text-gray-900">Login</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -123,9 +123,9 @@ function SignInForm() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username Or Email</FormLabel>
+                  <FormLabel className="text-gray-900">Username Or Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} />
+                    <Input placeholder="John" {...field} style={{ color: "black" }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -136,13 +136,14 @@ function SignInForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-gray-900">Password</FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
-                        placeholder=""
+                        placeholder="*****"
                         type={showPassword ? "text" : "password"}
                         {...field}
+                        style={{ color: "black" }}
                       />
                     </FormControl>
                     <Button
@@ -163,15 +164,15 @@ function SignInForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full cursor-pointer" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit"}
             </Button>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <Separator className="w-full" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-white px-2 text-gray-900 font-bold">
                   Or LOGIN With
                 </span>
               </div>
@@ -179,7 +180,7 @@ function SignInForm() {
             <Button
               onClick={googleSignIn}
               variant="outline"
-              className="h-fit border-gray-200 hover:bg-gray-50 hover:text-gray-900 rounded-lg bg-white shadow-none cursor-pointer w-full"
+              className="h-fit border-gray-200 text-black hover:bg-gray-50 hover:text-gray-900 rounded-lg bg-white shadow-none cursor-pointer w-full"
               disabled={isSubmitting}
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -204,7 +205,7 @@ function SignInForm() {
             </Button>
             <Button
               variant="outline"
-              className="w-full"
+              className="w-full cursor-pointer"
               onClick={githubSignIn}
               disabled={isSubmitting}
             >
@@ -223,7 +224,7 @@ function SignInForm() {
           </form>
         </Form>
         <Link href="/sign-up">
-          <div className="mt-4 text-center text-sm w-full">
+          <div className="mt-4 text-center text-sm w-full text-gray-700">
             Don't have an account?{" "}
             <span className="text-blue-500">Sign up</span>
           </div>
