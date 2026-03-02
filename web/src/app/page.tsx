@@ -70,8 +70,8 @@ const Page = () => {
             {/* Left Content */}
             <div className="space-y-8">
               <div className="space-y-4">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                  Your Code Snippets,{" "}
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+                  Your Code Snippets, <br className="hidden md:inline" />
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
                     Everywhere
                   </span>
@@ -121,20 +121,18 @@ const Page = () => {
               </div>
             </div>
 
-            {/* Right Visual */}
-            <div className="hidden lg:block">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/0 rounded-3xl blur-3xl" />
-                <div className="relative bg-muted/50 border border-border/50 rounded-3xl p-8 backdrop-blur">
-                  <div className="space-y-4">
-                    <div className="h-2 bg-primary/30 rounded w-3/4" />
-                    <div className="h-2 bg-primary/20 rounded w-1/2" />
-                    <div className="space-y-2 mt-6">
-                      {[...Array(4)].map((_, i) => (
-                        <div key={i} className="h-16 bg-background/50 rounded border border-border/30" />
-                      ))}
-                    </div>
-                  </div>
+            {/* Right Visual - use a real screenshot or illustration */}
+            <div className="hidden lg:flex justify-center">
+              <div className="relative w-[480px] max-w-full">
+                {/* soft glow background */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-primary/0 rounded-3xl blur-3xl" />
+                {/* screenshot container */}
+                <div className="relative bg-white dark:bg-slate-800 border border-border rounded-3xl shadow-xl overflow-hidden">
+                  <img
+                    src="https://source.unsplash.com/600x400/?code,editor" /* replace with project screenshot */
+                    alt="App screenshot"
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
               </div>
             </div>
