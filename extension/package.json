@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/srinivas-batthula/code-snippets-platform"
   },
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -149,12 +149,15 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "release:patch": "npm version patch -m \"🔖 Release %s\" && git push && git push --tags",
+    "release:minor": "npm version minor -m \"🔖 Release %s\" && git push && git push --tags",
+    "release:major": "npm version major -m \"🔖 Release %s\" && git push && git push --tags"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "@types/vscode": "^1.103.0",
+    "@types/vscode": "^1.80.0",
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
     "@vscode/test-cli": "^0.0.11",

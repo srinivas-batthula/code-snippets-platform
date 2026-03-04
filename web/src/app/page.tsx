@@ -47,13 +47,13 @@ const Page = () => {
   const openInVSCode = () => {
     const start = Date.now();
 
-    window.location.href = "vscode://srinivas-batthula.codesnippets/intro";
+    window.location.href = "vscode://srinivas-batthula.snipzen/intro";
 
     setTimeout(() => {
       const elapsed = Date.now() - start;
       if (elapsed < 600) {
         window.location.href =
-          "vscode:extension/srinivas-batthula.codesnippets";
+          "vscode:extension/srinivas-batthula.snipzen";
       }
     }, 500);
 
@@ -61,7 +61,7 @@ const Page = () => {
       const elapsed = Date.now() - start;
       if (elapsed < 1200) {
         window.location.href =
-          "https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.codesnippets";
+          "https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.snipzen";
       }
     }, 1000);
   };

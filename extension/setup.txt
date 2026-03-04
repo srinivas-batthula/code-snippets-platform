@@ -6,3 +6,4 @@
 4. Press 'Shift + F5' to Stop dev-mode
 
 5. (Only) To publish the extension,, Run `vsce package` & `vsce publish`
+6. Or You can publish directly with 1-cmd => `npm run release:patch`
