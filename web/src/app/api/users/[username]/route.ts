@@ -6,12 +6,12 @@ import User from "@/models/User";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { username: string } },
+    context: { params: Promise<{ username: string }> }
 ) {
     try {
         await connectDB();
 
-        const { username } = params;
+        const { username } = await context.params;
         if (!username) {
             return NextResponse.json(
                 { success: false, message: "Username not provided" },
