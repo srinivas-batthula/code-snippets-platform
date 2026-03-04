@@ -1,27 +1,34 @@
 #!/bin/bash
 
-#########  To run this `script`, 'bash ./install.sh'...
+######### To run this script:
+# bash ./install.sh
 
 echo "Installing dependencies for web and extension..."
 
-# Navigate to web and install
-if [ -d "web" ]; then
-    echo "Installing 'web' dependencies..."
-    cd web || exit
-    npm install
-    cd ..
-else
-    echo "❌ 'web' folder not found!"
-fi
-
-# Navigate to extension and install
+# -------- EXTENSION --------
 if [ -d "extension" ]; then
     echo "Installing 'extension' dependencies..."
     cd extension || exit
     npm install
+
+    echo "Compiling VSCode extension..."
+    npm run compile
     cd ..
 else
     echo "❌ 'extension' folder not found!"
 fi
 
-echo "✅ All dependencies installed!"
+# -------- WEB (Next.js) --------
+if [ -d "web" ]; then
+    echo "Installing 'web' dependencies..."
+    cd web || exit
+    npm install
+
+    echo "Starting Next.js server..."
+    echo "Press Ctrl+C to stop."
+    npm run dev
+else
+    echo "❌ 'web' folder not found!"
+fi
+
+echo "✅ All tasks completed!"

@@ -2,6 +2,7 @@
 import { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
+import { Navbar } from "@/components/Navbar";
 import "../styles/prism-theme.css";
 
 import "./globals.css";
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${inter.className}`}>
         {/* Wrap the 'whole App' in 'Providers', So 'NextAuth Session' is available 'globally'... */}
         <Providers>
+          <Navbar />
           <main>{children}</main>
           <Toaster richColors position="top-right"/>
         </Providers>

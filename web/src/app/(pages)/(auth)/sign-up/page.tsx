@@ -154,7 +154,7 @@ function SignUpForm() {
   return (
     <section className="flex flex-col items-center py-24 h-screen justify-center px-4">
       <div className="border-2 p-8 rounded-xl w-full max-w-md bg-white  outline-1 outline-black/10 shadow-lg flex flex-col">
-        <h1 className="text-center text-2xl font-bold mb-12">Sign Up</h1>
+        <h1 className="text-center text-2xl font-bold mb-12 text-gray-900">Sign Up</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -162,15 +162,16 @@ function SignUpForm() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel className="text-gray-900">Username</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder=""
+                      placeholder="John"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         debounced(e.target.value);
                       }}
+                      style={{ color: "black" }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -186,9 +187,9 @@ function SignUpForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-gray-900">Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} />
+                    <Input placeholder="example@gmail.com" {...field} style={{ color: "black" }} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -199,13 +200,14 @@ function SignUpForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-gray-900">Password</FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
-                        placeholder=""
+                        placeholder="*****"
                         type={showPassword ? "text" : "password"}
                         {...field}
+                        style={{ color: "black" }}
                       />
                     </FormControl>
                     <Button
@@ -231,13 +233,14 @@ function SignUpForm() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel className="text-gray-900">Confirm Password</FormLabel>
                   <div className="relative">
                     <FormControl>
                       <Input
-                        placeholder=""
+                        placeholder="*****"
                         type={showConfirmPassword ? "text" : "password"}
                         {...field}
+                        style={{ color: "black" }}
                       />
                     </FormControl>
                     <Button
@@ -260,22 +263,22 @@ function SignUpForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {/* {isSubmitting ? "Submitting..." : "Submit"} */}
-              Submit
+            <Button type="submit" className="w-full cursor-pointer" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit"}
+              {/* Submit */}
             </Button>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <Separator className="w-full" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">Or</span>
+                <span className="bg-white px-2 text-gray-600">Or</span>
               </div>
             </div>
             <Button
               onClick={googleSignUp}
               variant="outline"
-              className="h-fit border-gray-200 hover:bg-gray-50 hover:text-gray-900 rounded-lg bg-white shadow-none cursor-pointer w-full"
+              className="h-fit text-black border-gray-200 hover:bg-gray-50 hover:text-gray-900 rounded-lg bg-white shadow-none cursor-pointer w-full"
               disabled={isSubmitting}
             >
               <svg className="w-5 h-5 " viewBox="0 0 24 24">
@@ -301,7 +304,7 @@ function SignUpForm() {
             </Button>
             <Button
               variant="outline"
-              className="w-full "
+              className="w-full cursor-pointer"
               onClick={githubSignUp}
               disabled={isSubmitting}
             >
@@ -316,7 +319,7 @@ function SignUpForm() {
           </form>
         </Form>
         <Link href="/sign-in">
-          <div className="mt-4 text-center text-sm w-full">
+          <div className="mt-4 text-center text-sm w-full text-gray-700">
             Already have an account?{" "}
             <span className="text-blue-500">Login</span>
           </div>

@@ -25,15 +25,17 @@ export const codeEditorFormSchema = z.object({
 
     description: z
         .string()
-        .min(1, "Description is required")
-        .max(500, "Description must not exceed 500 characters"),
+        .max(300, "Description must not exceed 300 characters")
+        .optional()
+        .or(z.literal("")),
 
     tags: z
         .array(z.string())
-        .min(1, "At least one tag is required")
-        .max(10, "Cannot have more than 10 tags")
+        .max(5, "Cannot have more than 5 tags")
         .refine(
-            (tags) => tags.every((tag) => tag.length >= 2 && tag.length <= 20),
+            (tags) =>
+                tags.length === 0 ||
+                tags.every((tag) => tag.length >= 2 && tag.length <= 20),
             "Each tag must be between 2 and 20 characters",
         ),
 

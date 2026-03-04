@@ -45,11 +45,44 @@ interface Snippet {
   updatedAt: string;
   publisherId: string;
   publisherName: string;
+  // Snapshot-specific metadata (optional for snippet mode)
+  isSnapshot?: boolean;
+  extensionsCount?: number;
+  settingsCount?: number;
+  keybindingsCount?: number;
 }
 
-interface ApiResponse {
+type SearchMode = "snippets" | "snapshots";
+
+interface SnippetApiResponse {
   success: boolean;
   snippets: Snippet[];
+  pagination: {
+    totalCount: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    nextCursor: string | null;
+  };
+  message?: string;
+}
+
+interface SnapshotFromApi {
+  id: string;
+  title: string;
+  description: string | null;
+  publisherId: string;
+  publisherName: string;
+  createdAt: string;
+  updatedAt: string;
+  extensionsCount: number;
+  settingsCount: number;
+  keybindingsCount: number;
+}
+
+interface SnapshotApiResponse {
+  success: boolean;
+  snapshots: SnapshotFromApi[];
   pagination: {
     totalCount: number;
     limit: number;
@@ -115,6 +148,12 @@ export default function SearchPage() {
   );
   const [selectedTags, setSelectedTags] = useState<string[]>(
     searchParams.get("tag") ? [searchParams.get("tag")!] : [],
+  );
+  const [selectedUser, setSelectedUser] = useState<string>(
+    searchParams.get("user") || "",
+  );
+  const [mode, setMode] = useState<SearchMode>(
+    searchParams.get("type") === "snapshots" ? "snapshots" : "snippets",
   );
   const [tagInput, setTagInput] = useState<string>("");
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
@@ -219,35 +258,72 @@ export default function SearchPage() {
       setError(null);
 
       const params = new URLSearchParams();
-      params.set("limit", "12");
+      params.set("limit", "10");
 
       if (debouncedQuery.trim()) params.set("search", debouncedQuery.trim());
       if (selectedLanguage && selectedLanguage !== "all")
         params.set("language", selectedLanguage);
+      if (selectedUser && selectedUser !== "")
+        params.set("user", selectedUser);
       if (selectedTags.length > 0) {
         // The API expects single tag parameter, so we'll use the first selected tag
         params.set("tag", selectedTags[0]);
       }
 
-      const response = await fetch(`/api/snippets/getAll?${params.toString()}`);
+      const endpoint =
+        mode === "snippets"
+          ? "/api/snippets/getAll"
+          : "/api/snapshots/getAll";
+
+      const response = await fetch(`${endpoint}?${params.toString()}`);
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: Failed to fetch snippets`);
+        throw new Error(
+          `HTTP ${response.status}: Failed to fetch ${mode === "snippets" ? "snippets" : "snapshots"}`,
+        );
       }
 
-      const data: ApiResponse = await response.json();
+      const data = await response.json();
       console.log(data);
 
       if (!data.success) {
         throw new Error(data.message || "API returned error");
       }
 
-      setSnippets(data.snippets);
-      setPagination({
-        totalCount: data.pagination.totalCount,
-        totalPages: data.pagination.totalPages,
-        hasNextPage: data.pagination.hasNextPage,
-        nextCursor: data.pagination.nextCursor,
-      });
+      if (mode === "snippets") {
+        const snippetData = data as SnippetApiResponse;
+        setSnippets(snippetData.snippets);
+        setPagination({
+          totalCount: snippetData.pagination.totalCount,
+          totalPages: snippetData.pagination.totalPages,
+          hasNextPage: snippetData.pagination.hasNextPage,
+          nextCursor: snippetData.pagination.nextCursor,
+        });
+      } else {
+        const snapshotData = data as SnapshotApiResponse;
+        const mappedSnippets: Snippet[] = snapshotData.snapshots.map((s) => ({
+          id: s.id,
+          title: s.title,
+          description: s.description || "",
+          code: "",
+          language: "",
+          tags: [],
+          publisherId: s.publisherId,
+          publisherName: s.publisherName,
+          createdAt: s.createdAt,
+          updatedAt: s.updatedAt,
+          isSnapshot: true,
+          extensionsCount: s.extensionsCount,
+          settingsCount: s.settingsCount,
+          keybindingsCount: s.keybindingsCount,
+        }));
+        setSnippets(mappedSnippets);
+        setPagination({
+          totalCount: snapshotData.pagination.totalCount,
+          totalPages: snapshotData.pagination.totalPages,
+          hasNextPage: snapshotData.pagination.hasNextPage,
+          nextCursor: snapshotData.pagination.nextCursor,
+        });
+      }
     } catch (err: any) {
       console.error("Fetch error:", err);
       setError(err.message || "Failed to fetch snippets");
@@ -261,7 +337,7 @@ export default function SearchPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [debouncedQuery, selectedLanguage, selectedTags]);
+  }, [debouncedQuery, selectedLanguage, selectedTags, selectedUser, mode]);
 
   // Update URL params when filters change
   useEffect(() => {
@@ -269,11 +345,14 @@ export default function SearchPage() {
     if (debouncedQuery.trim()) params.set("search", debouncedQuery.trim());
     if (selectedLanguage && selectedLanguage !== "all")
       params.set("language", selectedLanguage);
+    if (selectedUser && selectedUser !== "")
+      params.set("user", selectedUser);
     if (selectedTags.length > 0) params.set("tag", selectedTags[0]);
+     params.set("type", mode);
 
     const newUrl = `/search${params.toString() ? `?${params.toString()}` : ""}`;
     router.replace(newUrl, { scroll: false });
-  }, [debouncedQuery, selectedLanguage, selectedTags, router]);
+  }, [debouncedQuery, selectedLanguage, selectedTags, selectedUser, mode, router]);
 
   // Fetch snippets when dependencies change
   useEffect(() => {
@@ -281,8 +360,12 @@ export default function SearchPage() {
   }, [fetchSnippets]);
 
   const handleSnippetClick = (snippet: Snippet) => {
-    // Navigate to snippet detail page with only the ID
-    router.push(`/snippets/${snippet.id}`);
+    // Navigate to appropriate detail page based on current mode / data
+    if (mode === "snapshots" || snippet.isSnapshot) {
+      router.push(`/snapshots/${snippet.id}`);
+    } else {
+      router.push(`/snippets/${snippet.id}`);
+    }
   };
 
   const clearFilters = () => {
@@ -290,22 +373,50 @@ export default function SearchPage() {
     setSelectedLanguage("");
     setSelectedTags([]);
     setTagInput("");
+    setSelectedUser("");
     setCurrentPage(1);
   };
 
   const hasActiveFilters =
     debouncedQuery ||
     (selectedLanguage && selectedLanguage !== "all") ||
-    selectedTags.length > 0;
+    (selectedUser && selectedUser !== "") || selectedTags.length > 0;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Search Code Snippets</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            Search{" "}
+            <span className="inline-flex items-center rounded-full border border-border bg-muted px-1 py-1 text-sm">
+              <button
+                type="button"
+                onClick={() => setMode("snippets")}
+                className={`px-3 py-1 rounded-full transition-colors ${
+                  mode === "snippets"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Snippets
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("snapshots")}
+                className={`px-3 py-1 rounded-full transition-colors ${
+                  mode === "snapshots"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Snapshots
+              </button>
+            </span>
+          </h1>
           <p className="text-muted-foreground">
-            Find code snippets by title, description, language, or tags
+            Find <strong>code-snippets</strong> &{" "}
+            <strong>env-snapshots</strong> by title, language, user or tags
           </p>
         </div>
 
@@ -315,7 +426,11 @@ export default function SearchPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
             <Input
               type="text"
-              placeholder="Search snippets by title or description..."
+              placeholder={
+                mode === "snippets"
+                  ? "Search snippets by title or description..."
+                  : "Search snapshots by title or description..."
+              }
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 pr-4 h-12 text-lg"
@@ -327,15 +442,14 @@ export default function SearchPage() {
         <div className="mb-6 space-y-4 ">
           <div className="flex flex-wrap gap-4 ">
             {/* Language Filter */}
-            <div className="w-[200px]">
+            <div className="w-[200px]" hidden={mode === "snapshots"}>
               <Select
                 value={selectedLanguage || "all"}
                 onValueChange={(value) =>
                   setSelectedLanguage(value === "all" ? "" : value)
                 }
               >
-                <SelectTrigger 
-                className="w-50">
+                <SelectTrigger className="w-50">
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
                 <SelectContent>
@@ -416,6 +530,16 @@ export default function SearchPage() {
               </div>
             </div>
 
+            {/* User Filter */}
+            <div className="w-[220px]">
+              <Input
+                type="text"
+                placeholder="Filter by user"
+                value={selectedUser}
+                onChange={(e) => setSelectedUser(e.target.value)}
+              />
+            </div>
+
             {/* Clear Filters */}
             {hasActiveFilters && (
               <Button
@@ -439,7 +563,8 @@ export default function SearchPage() {
               ) : (
                 <span>
                   {hasActiveFilters ? "Found" : "Showing"}{" "}
-                  {pagination.totalCount} snippet
+                  {pagination.totalCount}{" "}
+                  {mode === "snippets" ? "snippet" : "snapshot"}
                   {pagination.totalCount !== 1 ? "s" : ""}
                 </span>
               )}
@@ -451,7 +576,9 @@ export default function SearchPage() {
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-12">
             <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-            <p className="text-muted-foreground">Searching snippets...</p>
+            <p className="text-muted-foreground">
+              Searching {mode === "snippets" ? "snippets" : "snapshots"}...
+            </p>
           </div>
         )}
 
@@ -462,7 +589,7 @@ export default function SearchPage() {
               <Search className="h-16 w-16 mx-auto mb-4" />
             </div>
             <h3 className="text-lg font-medium text-foreground mb-2">
-              No snippets found
+              No {mode === "snippets" ? "snippets" : "snapshots"} found
             </h3>
             <p className="text-muted-foreground mb-4">
               Try adjusting your search criteria or filters
@@ -496,71 +623,114 @@ export default function SearchPage() {
               {snippets.map((snippet) => (
                 <Card
                   key={snippet.id}
-                  className="cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                  className={`cursor-pointer transition-shadow duration-200 ${
+                    mode === "snapshots"
+                      ? "border-primary/40 border-dashed bg-muted/40 hover:shadow-md"
+                      : "hover:shadow-lg"
+                  }`}
                   onClick={() => handleSnippetClick(snippet)}
                 >
                   <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <CardTitle className="text-xl font-semibold flex-1 pr-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <CardTitle className="text-xl font-semibold flex-1 pr-2">
                         {snippet.title}
                       </CardTitle>
-                      <CardAction>
-                        <Button variant="secondary" size="sm">
-                          {getLanguageDisplayName(snippet.language)}
-                        </Button>
-                      </CardAction>
+                      {mode === "snippets" ? (
+                        <CardAction>
+                          <Button variant="secondary" size="sm">
+                            {getLanguageDisplayName(snippet.language)}
+                          </Button>
+                        </CardAction>
+                      ) : (
+                        <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                          Snapshot
+                        </span>
+                      )}
                     </div>
-                    {/* {snippet.description && (
+                    {snippet.description && (
                       <p className="text-muted-foreground text-sm mt-2 line-clamp-2">
                         {snippet.description}
                       </p>
-                    )} */}
+                    )}
                   </CardHeader>
 
                   <CardContent>
-                    {/* Tags */}
-                    {snippet.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {snippet.tags.slice(0, 3).map((tag, index) => (
-                          <span
-                            key={index}
-                            className={`px-2 py-1 rounded-full text-xs font-medium border ${getPillColorForTag(
-                              tag,
-                            )}`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                        {snippet.tags.length > 3 && (
-                          <span className="px-2 py-1 rounded-full text-xs font-medium border bg-muted text-muted-foreground border-border">
-                            +{snippet.tags.length - 3} more
-                          </span>
+                    {mode === "snippets" ? (
+                      <>
+                        {/* Tags */}
+                        {snippet.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {snippet.tags.slice(0, 3).map((tag, index) => (
+                              <span
+                                key={index}
+                                className={`px-2 py-1 rounded-full text-xs font-medium border ${getPillColorForTag(
+                                  tag,
+                                )}`}
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                            {snippet.tags.length > 3 && (
+                              <span className="px-2 py-1 rounded-full text-xs font-medium border bg-muted text-muted-foreground border-border">
+                                +{snippet.tags.length - 3} more
+                              </span>
+                            )}
+                          </div>
                         )}
-                      </div>
-                    )}
 
-                    {/* Code Preview */}
-                    {snippet.code && (
-                      <div className="mt-4">
-                        <div className="rounded-md border bg-muted/30 p-0 max-h-30 overflow-hidden">
-                          <PrismHighlighter
-                            code={limitCodeToLines(snippet.code, 6).code}
-                            language={snippet.language}
-                            showLineNumbers={false}
-                            className="text-xs"
-                          />
-                          {limitCodeToLines(snippet.code, 6).hasMore && (
-                            <div className="text-xs text-muted-foreground mt-2 text-center">
-                              ... more lines
+                        {/* Code Preview */}
+                        {snippet.code && (
+                          <div className="mt-4">
+                            <div className="rounded-md border bg-muted/30 p-0 max-h-30 overflow-hidden">
+                              <PrismHighlighter
+                                code={limitCodeToLines(snippet.code, 6).code}
+                                language={snippet.language}
+                                showLineNumbers={false}
+                                className="text-xs"
+                              />
+                              {limitCodeToLines(snippet.code, 6).hasMore && (
+                                <div className="text-xs text-muted-foreground mt-2 text-center">
+                                  ... more lines
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="mt-2 space-y-3">
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div className="rounded-md border border-border bg-background/60 px-2 py-2 text-center">
+                            <div className="font-semibold text-foreground">
+                              {snippet.extensionsCount ?? 0}
+                            </div>
+                            <div className="text-muted-foreground">
+                              extensions
+                            </div>
+                          </div>
+                          <div className="rounded-md border border-border bg-background/60 px-2 py-2 text-center">
+                            <div className="font-semibold text-foreground">
+                              {snippet.settingsCount ?? 0}
+                            </div>
+                            <div className="text-muted-foreground">
+                              settings
+                            </div>
+                          </div>
+                          <div className="rounded-md border border-border bg-background/60 px-2 py-2 text-center">
+                            <div className="font-semibold text-foreground">
+                              {snippet.keybindingsCount ?? 0}
+                            </div>
+                            <div className="text-muted-foreground">
+                              keybindings
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
                   </CardContent>
 
-                  <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
-                    <span>By {snippet.publisherName}</span>
+                  <CardFooter onClick={()=> router.push(`/profile?username=${snippet.publisherName}`)} className="flex justify-between items-center text-xs text-muted-foreground cursor-cell">
+                    <span className="hover:text-blue-400">By {snippet.publisherName}</span>
                     <span>{formatDate(snippet.createdAt)}</span>
                   </CardFooter>
                 </Card>

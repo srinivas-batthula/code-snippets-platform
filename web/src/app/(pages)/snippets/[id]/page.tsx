@@ -13,6 +13,13 @@ import PrismHighlighter from "@/components/PrismHighlighter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, Copy, Check } from "lucide-react";
 import { getLanguageDisplayName } from "@/types/languages";
+import CodeEditor from "@/components/CodeEditor";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Snippet {
   id: string;
@@ -67,6 +74,8 @@ export default function SnippetDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedId, setCopiedId] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   const id = params.id as string;
 
@@ -122,6 +131,18 @@ export default function SnippetDetailPage() {
     }
   };
 
+  const copyIdToClipboard = async () => {
+    if (!snippet?.id) return;
+
+    try {
+      await navigator.clipboard.writeText(snippet.id);
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy ID:", err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -158,29 +179,57 @@ export default function SnippetDetailPage() {
 
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-start justify-between mb-4">
-            <h1 className="text-3xl font-bold text-foreground flex-1 pr-4">
-              {snippet.title}
-            </h1>
-            <div className="flex gap-2">
-              <Button variant="secondary" size="default">
-                {getLanguageDisplayName(snippet.language || "text")}
-              </Button>
+          <div className="flex flex-col gap-3 mb-4">
+            <div className="flex items-start justify-between gap-3">
+              <h1 className="text-3xl font-bold text-foreground flex-1 pr-4">
+                {snippet.title}
+              </h1>
+              <div className="flex gap-2 flex-wrap justify-end">
+                <Button variant="secondary" size="default">
+                  {getLanguageDisplayName(snippet.language || "text")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="default"
+                  onClick={copyToClipboard}
+                  className="flex items-center gap-2"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      Copy Code
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* ID + copy */}
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">ID:</span>
+              <code className="rounded bg-muted px-2 py-1 text-[11px] break-all">
+                {snippet.id}
+              </code>
               <Button
                 variant="outline"
-                size="default"
-                onClick={copyToClipboard}
-                className="flex items-center gap-2"
+                size="sm"
+                onClick={copyIdToClipboard}
+                className="h-7 px-2 text-xs flex items-center gap-1"
               >
-                {copied ? (
+                {copiedId ? (
                   <>
-                    <Check className="h-4 w-4" />
-                    Copied!
+                    <Check className="h-3 w-3" />
+                    Copied
                   </>
                 ) : (
                   <>
-                    <Copy className="h-4 w-4" />
-                    Copy Code
+                    <Copy className="h-3 w-3" />
+                    Copy ID
                   </>
                 )}
               </Button>
@@ -236,7 +285,7 @@ export default function SnippetDetailPage() {
           {/* Author and Date Info */}
 
         <div className="flex items-center justify-around gap-4 text-sm text-muted-foreground mb-6 p-3 bg-muted/30 rounded-lg">
-            <span>
+            <span onClick={()=> router.push(`/profile?username=${snippet.publisherName}`)} className="cursor-pointer hover:text-blue-400">
               <strong>Author:</strong> {snippet.publisherName}
             </span>
             {/* <span>•</span> */}
@@ -255,7 +304,7 @@ export default function SnippetDetailPage() {
             Browse More Snippets
           </Button>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap justify-end">
             <Button
               variant="outline"
               onClick={() => {
@@ -279,9 +328,37 @@ export default function SnippetDetailPage() {
                 More "{snippet.tags[0]}" Snippets
               </Button>
             )}
+
+            <Button variant="default" onClick={() => setIsEditOpen(true)}>
+              Edit Snippet
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* Edit Snippet Modal */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="w-full max-w-[90vw] lg:max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Code-Snippet</DialogTitle>
+          </DialogHeader>
+          <CodeEditor
+            key={snippet.id}
+            snippetId={snippet.id}
+            initialData={{
+              title: snippet.title,
+              description: snippet.description,
+              language: snippet.language as any,
+              code: snippet.code,
+              tags: snippet.tags,
+            }}
+            onSubmit={async () => {
+              setIsEditOpen(false);
+              setTimeout(() => router.refresh(), 1000);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

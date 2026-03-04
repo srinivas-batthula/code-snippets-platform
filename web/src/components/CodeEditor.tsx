@@ -35,6 +35,8 @@ import { Loader2 } from "lucide-react";
 interface CodeEditorProps {
   /** Initial form data */
   initialData?: Partial<CodeEditorFormData>;
+  /** Optional snippet ID for editing an existing snippet */
+  snippetId?: string;
   /** Callback when form is submitted */
   onSubmit?: (data: CodeEditorFormData) => void | Promise<void>;
   /** Whether the form is in loading/submitting state */
@@ -45,6 +47,7 @@ interface CodeEditorProps {
 
 export default function CodeEditor({
   initialData,
+  snippetId,
   onSubmit,
   isLoading = false,
   className = "",
@@ -130,13 +133,27 @@ export default function CodeEditor({
     setIsSaving(true);
     try {
       console.log("Submitting form with data:", data);
-      const response = await axios.post("/api/snippets/upload", data);
+      let response;
+      if (snippetId) {
+        // Update existing snippet
+        response = await axios.patch(`/api/snippets/update/${snippetId}`, data);
+      } else {
+        // Create new snippet
+        response = await axios.post("/api/snippets/upload", data);
+      }
 
       console.log("Form submitted successfully:", data);
       console.log("Server response:", response.data);
 
       // Show success message
-      toast.success("Snippet saved successfully!");
+      toast.success(
+        snippetId ? "Snippet updated successfully!" : "Snippet saved successfully!",
+      );
+
+      // Optional external callback for parent components (e.g., to refresh UI)
+      if (onSubmit) {
+        await onSubmit(data);
+      }
 
       // Optionally reset form after successful submission
       // form.reset();
@@ -238,9 +255,9 @@ export default function CodeEditor({
           onSubmit={form.handleSubmit(handleFormSubmit)}
           className="space-y-6"
         >
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col lg:flex-row gap-6 w-full">
             {/* Left Column - Form Fields */}
-            <div className="space-y-6 max-w-md w-full">
+            <div className="space-y-6 lg:max-w-md w-full min-w-0">
               {/* Title Field */}
               <div className="flex flex-row gap-4 w-full ">
                 <FormField
@@ -406,7 +423,7 @@ export default function CodeEditor({
             </div>
 
             {/* Right Column - Code Editor */}
-            <div className="space-y-4 w-full ">
+            <div className="space-y-4 w-full min-w-0">
               <FormField
                 control={form.control}
                 name="code"

@@ -59,10 +59,25 @@ export async function GET(req: Request) {
                                 description: 1,
                                 publisherId: 1,
                                 publisherName: 1,
-                                // settings: 1,     // Use `/import/[id]` route to get all fields of a particular 'snippet' to reduce load... 
-                                // extensions: 1,
-                                // keybindings: 1,
-                                // workspaceConfig: 1,
+                                // Keep heavy fields out of the response, but expose lightweight counts
+                                extensionsCount: {
+                                    $size: {
+                                        $ifNull: ["$extensions", []],
+                                    },
+                                },
+                                settingsCount: {
+                                    $size: {
+                                        $ifNull: [
+                                            { $objectToArray: "$settings" },
+                                            [],
+                                        ],
+                                    },
+                                },
+                                keybindingsCount: {
+                                    $size: {
+                                        $ifNull: ["$keybindings", []],
+                                    },
+                                },
                                 createdAt: 1,
                                 updatedAt: 1,
                             },
@@ -95,6 +110,11 @@ export async function GET(req: Request) {
 
                     publisherId: s.publisherId,
                     publisherName: s.publisherName || "Unknown",
+
+                    // Lightweight counts for UI display
+                    extensionsCount: s.extensionsCount ?? 0,
+                    settingsCount: s.settingsCount ?? 0,
+                    keybindingsCount: s.keybindingsCount ?? 0,
 
                     createdAt: s.createdAt,
                     updatedAt: s.updatedAt,
