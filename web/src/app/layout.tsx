@@ -15,6 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         {/* Root layout kept simple - Prism.js CSS is in (pages)/layout.tsx */}
+        <link rel="icon" href="/assets/icon.png" />
       </head>
       <body className={`${inter.className}`}>
         {/* Wrap the 'whole App' in 'Providers', So 'NextAuth Session' is available 'globally'... */}

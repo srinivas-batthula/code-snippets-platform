@@ -5,9 +5,9 @@
     </a>
     <h1>Snipzen</h1>
     <h3>Sync code snippets & dev setups to cloud</h3>
-    <a href="https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.jump-search"><img src="https://img.shields.io/visual-studio-marketplace/stars/srinivas-batthula.jump-search?style=for-the-badge&logo=visualstudiocode&labelColor=252526&color=0098FF"></a>
-    <a href="https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.jump-search"><img src="https://img.shields.io/visual-studio-marketplace/i/srinivas-batthula.jump-search?style=for-the-badge&logo=visualstudiocode&labelColor=252526&color=0098FF"></a>
-    <a href="https://github.com/srinivas-batthula/VSCode-Extension/releases"><img src="https://img.shields.io/github/v/release/srinivas-batthula/VSCode-Extension.svg?style=for-the-badge&logo=visualstudiocode&labelColor=252526&color=0098FF"></a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.snipzen"><img src="https://img.shields.io/visual-studio-marketplace/stars/srinivas-batthula.snipzen?style=for-the-badge&logo=visualstudiocode&labelColor=252526&color=0098FF"></a>
+    <a href="https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.snipzen"><img src="https://img.shields.io/visual-studio-marketplace/i/srinivas-batthula.snipzen?style=for-the-badge&logo=visualstudiocode&labelColor=252526&color=0098FF"></a>
+    <a href="https://github.com/srinivas-batthula/code-snippets-platform/releases"><img src="https://img.shields.io/github/v/release/srinivas-batthula/code-snippets-platform.svg?style=for-the-badge&logo=visualstudiocode&labelColor=252526&color=0098FF"></a>
 </div>
 
 <br>
@@ -16,8 +16,8 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 ## 🔗 Live Links
 
-- [![VSCode Marketplace](https://img.shields.io/badge/Marketplace-Snipzen-blue)](https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.jump-search)
-- [![Website](https://img.shields.io/badge/Website-snipzen.vercel.app-blue)](https://snipzen.com)
+- [![VSCode Marketplace](https://img.shields.io/badge/Marketplace-Snipzen-blue)](https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.snipzen)
+- [![Website](https://img.shields.io/badge/Website-snipzen.vercel.app-blue)](https://snipzen.vercel.app)
 
 ## ✨ Key Features
 
@@ -137,40 +137,9 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 
 ## 🧬 Feature Workflows
-
-<details>
-<summary><strong>▶️ View Feature Workflows (Architecture Diagrams)</strong></summary>
+<a href="https://github.com/srinivas-batthula/code-snippets-platform/blob/main/README.md"><strong>▶️ View Feature Workflows (Architecture Diagrams)</strong></a>
 <br>
 
-#### 1. Auth Feature Workflow
-
-<p align="center">
-  <a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/authFlow_codesnippets.svg" target="_blank">
-    <img src="../assets/features/authFlow_codesnippets.svg" width="90%" alt="Auth Feature Workflow" />
-  </a>
-</p>
-
----
-
-#### 2. Snippets Feature Workflow
-
-<p align="center">
-  <a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/snippetsFlow_codesnippets.svg" target="_blank">
-    <img src="../assets/features/snippetsFlow_codesnippets.svg" width="90%" alt="Snippets Feature Workflow" />
-  </a>
-</p>
-
----
-
-#### 3. Search Feature Workflow
-
-<p align="center">
-  <a href="https://raw.githubusercontent.com/srinivas-batthula/code-snippets-platform/refs/heads/main/assets/features/searchFlow_codesnippets.svg" target="_blank">
-    <img src="../assets/features/searchFlow_codesnippets.svg" width="90%" alt="Search Feature Workflow" />
-  </a>
-</p>
-
-</details>
 
 ## 🌍 Real-World Use Cases
 

@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/srinivas-batthula/code-snippets-platform"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -34,7 +34,7 @@
       "properties": {
         "codesnippets.apiBaseUrl": {
           "type": "string",
-          "default": "http://localhost:3000",
+          "default": "https://snipzen.vercel.app",
           "description": "Base URL for SnipZen backend API"
         },
         "codesnippets.secretKey": {

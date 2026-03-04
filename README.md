@@ -17,7 +17,7 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 ## 🔗 Live Links
 
 - [![VSCode Marketplace](https://img.shields.io/badge/Marketplace-Snipzen-blue)](https://marketplace.visualstudio.com/items?itemName=srinivas-batthula.snipzen)
-- [![Website](https://img.shields.io/badge/Website-snipzen.vercel.app-blue)](https://snipzen.com)
+- [![Website](https://img.shields.io/badge/Website-snipzen.vercel.app-blue)](https://snipzen.vercel.app)
 
 ## ✨ Key Features
 
