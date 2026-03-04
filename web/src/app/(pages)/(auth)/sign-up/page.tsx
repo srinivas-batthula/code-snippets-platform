@@ -128,7 +128,7 @@ function SignUpForm() {
     console.log("Google Sign Up");
     setIsSubmitting(true);
     try {
-      await signIn("google", { callbackUrl: "/dashboard" });
+      await signIn("google", { callbackUrl: "/profile" });
     } catch (error) {
       toast.error("Login Failed", {
         description: "An unexpected error occurred.",
@@ -141,7 +141,7 @@ function SignUpForm() {
     console.log("GitHub Sign Up");
     setIsSubmitting(true);
     try {
-      await signIn("github", { callbackUrl: "/dashboard" });
+      await signIn("github", { callbackUrl: "/profile" });
     } catch (error) {
       toast.error("Login Failed", {
         description: "An unexpected error occurred.",

@@ -65,7 +65,7 @@ function SignInForm() {
         redirect: false,
         email: data.username,
         password: data.password,
-        callbackUrl: "/dashboard",
+        callbackUrl: "/profile",
       });
 
       if (res?.ok && res.url) {
@@ -88,7 +88,7 @@ function SignInForm() {
     console.log("Google Sign In");
     setIsSubmitting(true);
     try {
-      await signIn("google", { callbackUrl: "/dashboard" });
+      await signIn("google", { callbackUrl: "/profile" });
     } catch (error) {
       toast.error("Login Failed", {
         description: "An unexpected error occurred.",
@@ -102,7 +102,7 @@ function SignInForm() {
     console.log("GitHub Sign In");
     setIsSubmitting(true);
     try {
-      await signIn("github", { callbackUrl: "/dashboard" });
+      await signIn("github", { callbackUrl: "/profile" });
     } catch (error) {
       toast.error("Login Failed", {
         description: "An unexpected error occurred.",
