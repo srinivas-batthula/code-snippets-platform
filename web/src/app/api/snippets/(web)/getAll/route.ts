@@ -68,16 +68,7 @@ export async function GET(req: Request) {
                                 updatedAt: 1,
                                 publisherId: 1,
                                 publisherName: 1,
-                                code: {
-                                    $function: {
-                                        body: function (code: string, maxLines: number = 3) {
-                                            if (!code) return "";
-                                            return code.split("\n").slice(0, maxLines).join("\n");
-                                        },
-                                        args: ["$code", 3],
-                                        lang: "js"  // Tells 'MongoDB' to use `JavaScript` to run the 'function'...
-                                    }
-                                }
+                                code: 1,
                             },
                         },
                     ],
@@ -108,7 +99,7 @@ export async function GET(req: Request) {
                     title: s.title,
                     description: s.description || null,
 
-                    code: s.code,
+                    code: limitCode(s.code),
                     language: s.lang,
                     tags: s.tags,
 
@@ -136,4 +127,9 @@ export async function GET(req: Request) {
             { status: 500 }
         );
     }
+}
+
+function limitCode(code: string, maxLines = 3) {
+    if (!code) return "";
+    return code.split("\n").slice(0, maxLines).join("\n");
 }
