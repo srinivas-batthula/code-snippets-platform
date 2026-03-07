@@ -1,0 +1,22 @@
+{
+    "imgUrl": "/utils/projects/snipzen_project.gif",
+    "title": "SnipZen Platform",
+    "description": "A developer productivity tool with a VSCode extension & Web app to manage, sync, and reuse code snippets.",
+    "techStack": [
+        "TypeScript",
+        "VSCode API",
+        "Next.Js",
+        "MongoDB",
+        "NextAuth"
+    ],
+    "keyFeatures": [
+        "VSCode Extension to import & export snippets directly from VSCode",
+        "Sync Snippets & Environment Snapshots across multiple devices",
+        "Advanced search with filters for language, tags, and users",
+        "Secure Authentication with JWT & personal access tokens",
+        "Infinite scrolling with cursor-based pagination for fast search"
+    ],
+    "isLiveLink": "true",
+    "githubLink": "https://github.com/srinivas-batthula/code-snippets-platform",
+    "liveLink": "https://snipzen.vercel.app"
+}
