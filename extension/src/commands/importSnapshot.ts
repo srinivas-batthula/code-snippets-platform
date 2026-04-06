@@ -115,6 +115,16 @@ export async function registerImportSnapshot(context: vscode.ExtensionContext) {
                         log(`Snapshot '${snapshot.title}' imported successfully!\nInstalled ${newExts} new extension(s),\nMerged 'settings.json' & 'keybindings.json with ${newSettings + newKeybindings} new value(s)!'`, 'info');
                     }
                 );
+
+                // After progress completes → Reload VSCode to apply extensions/settings...
+                const reload = await vscode.window.showInformationMessage(
+                    "Snapshot applied successfully.  Reload VS Code to apply all changes?",
+                    "Reload Now",
+                    "Later"
+                );
+                if (reload === "Reload Now") {
+                    await vscode.commands.executeCommand('workbench.action.reloadWindow');
+                }
             } catch (err: any) {
                 log(`Snapshot Import error: ${err.message || 'unknown error'}`, 'error');
             }

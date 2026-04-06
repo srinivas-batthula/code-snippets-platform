@@ -54,7 +54,69 @@ export async function fetchSnapshotById(id: string): Promise<{ ok: boolean, mess
     }
 }
 
-// @helper for Installing-Extensions & Merging Settings, Keybindings...
+// @helper for Installing-Extensions...
+// export async function installExtensions(requiredExtensions: string[]) {
+//     // Dev-Host guard (Skip installs in Dev-Env)...
+//     if (vscode.env.appHost === 'extensionDevelopmentHost') {
+//         log(
+//             'Skipping extension installation in Extension Dev Host (F5). ' +
+//             'This will work correctly in real VS Code.',
+//             'warn'
+//         );
+//         return { newInstalls: [], skipped: requiredExtensions.length };
+//     }
+
+//     // Get currently installed extensions
+//     const installed = vscode.extensions.all.map(ext => ext.id.toLowerCase());
+
+//     // Filter out already installed
+//     const toInstall = requiredExtensions.filter(ext => !installed.includes(ext.toLowerCase()));
+
+//     const newlyInstalled: string[] = [];
+
+//     try {
+//         for (const ext of toInstall) {
+//             // Use VSCode internal API...
+//             await vscode.commands.executeCommand(
+//                 'workbench.extensions.installExtension',
+//                 ext
+//             );
+
+//             newlyInstalled.push(ext); // track successful installs
+//         }
+
+//         return {
+//             newInstalls: newlyInstalled,
+//             skipped: requiredExtensions.length - newlyInstalled.length
+//         };
+//     }
+//     catch (err: any) {
+//         log(
+//             `Extension install failed. Rolling back ${newlyInstalled.length} extension(s)...`,
+//             'error'
+//         );
+
+//         // Rollback is tricky via API → best effort uninstall
+//         for (const ext of newlyInstalled.reverse()) {
+//             try {
+//                 await vscode.commands.executeCommand(
+//                     'workbench.extensions.uninstallExtension',
+//                     ext
+//                 );
+//             } catch {
+//                 log(`Rollback failed for extension: ${ext}`, 'warn');
+//             }
+//         }
+
+//         throw new Error(
+//             `Snapshot import Failed during extension installation,
+// Rollback attempted.`
+//         );
+//     }
+// }
+
+
+// @helper for Installing-Extensions (Parallel + Controlled-Concurrency)...
 export async function installExtensions(requiredExtensions: string[]) {
     // Dev-Host guard (Skip installs in Dev-Env)...
     if (vscode.env.appHost === 'extensionDevelopmentHost') {
@@ -73,23 +135,71 @@ export async function installExtensions(requiredExtensions: string[]) {
     const toInstall = requiredExtensions.filter(ext => !installed.includes(ext.toLowerCase()));
 
     const newlyInstalled: string[] = [];
+
+    // Concurrency limit (avoid overwhelming VSCode / network)
+    const CONCURRENCY_LIMIT = 3;
+
+    // @helper: process installs in batches (parallel inside each batch)...
+    async function installBatch(batch: string[]) {
+
+        // Run installs in parallel within batch
+        const results = await Promise.allSettled(
+            batch.map(async (ext) => {
+                try {
+                    // Use VSCode internal API
+                    await vscode.commands.executeCommand(
+                        'workbench.extensions.installExtension',
+                        ext
+                    );
+
+                    return { ext, success: true };
+                } catch (err) {
+                    return { ext, success: false, err };
+                }
+            })
+        );
+
+        // Process results
+        for (const res of results) {
+            if (res.status === 'fulfilled' && res.value.success) {
+                newlyInstalled.push(res.value.ext);
+            } else {
+                const failedExt = res.status === 'fulfilled'
+                    ? res.value.ext
+                    : 'unknown';
+
+                throw new Error(`Failed to install extension: ${failedExt}`);
+            }
+        }
+    }
+
     try {
-        for (const ext of toInstall) {
-            await execAsync(`code --install-extension ${ext}`);
-            newlyInstalled.push(ext);   // track successful installs...
+        // Split extensions into batches...
+        for (let i = 0; i < toInstall.length; i += CONCURRENCY_LIMIT) {
+            const batch = toInstall.slice(i, i + CONCURRENCY_LIMIT);
+
+            // Install Extensions batch-wise in parallel
+            await installBatch(batch);
         }
 
-        return { newInstalls: newlyInstalled, skipped: requiredExtensions.length - newlyInstalled.length };
+        return {
+            newInstalls: newlyInstalled,
+            skipped: requiredExtensions.length - newlyInstalled.length
+        };
     }
     catch (err: any) {
         log(
             `Extension install failed. Rolling back ${newlyInstalled.length} extension(s)...`,
             'error'
         );
-        // Rollback: uninstall only what we installed newly...
+
+        // Rollback (best effort uninstall in reverse order)
         for (const ext of newlyInstalled.reverse()) {
             try {
-                await execAsync(`code --uninstall-extension ${ext}`);
+                await vscode.commands.executeCommand(
+                    'workbench.extensions.uninstallExtension',
+                    ext
+                );
             } catch {
                 log(`Rollback failed for extension: ${ext}`, 'warn');
             }
@@ -97,43 +207,35 @@ export async function installExtensions(requiredExtensions: string[]) {
 
         throw new Error(
             `Snapshot import Failed during extension installation,
-                Rollback completed successfully!`
+Rollback attempted.`
         );
     }
 }
 
-function execAsync(cmd: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        exec(cmd, (err) => {
-            if (err) reject(err);
-            else resolve();
-        });
-    });
-}
-
-
 export async function mergeSettings(newSettings: Record<string, any>, settingsPath: string) {
     backupFile(settingsPath);
 
-    let current: Record<string, any> = {};
-    try {
-        current = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
-    } catch {
-        current = {};
-    }
+    //use VSCode API...
+    const config = vscode.workspace.getConfiguration();
 
-    let updated = false, count = 0;
+    let count = 0;
+
     for (const [key, value] of Object.entries(newSettings)) {
-        if (!(key in current)) {   // Only add if not present
-            current[key] = value;
-            updated = true;
+        const existing = config.get(key);
+
+        // Only add if not present
+        if (!existing || existing === undefined) {
+            // Safe cross-platform update
+            await config.update(
+                key,
+                value,
+                vscode.ConfigurationTarget.Global
+            );
+
             count++;
         }
     }
 
-    if (updated) {
-        fs.writeFileSync(settingsPath, JSON.stringify(current, null, 4));
-    }
     return { count };
 }
 

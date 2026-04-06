@@ -4,8 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 
 export function getDevHostExtensionsDir(): string | null {
-    const userDataDir = vscode.env.appRoot; // Returns path to VSCode installation
-    // If we detect dev-host launch with .vscode-test, we can read process.argv
+    // Detect dev-host launch with --extensions-dir
     const testExtArg = process.argv.find(arg => arg.startsWith('--extensions-dir='));
     if (testExtArg) {
         return testExtArg.split('=')[1];
@@ -13,26 +12,33 @@ export function getDevHostExtensionsDir(): string | null {
     return null; // null means real VSCode
 }
 
+/**
+ * use VSCode's `globalStorageUri` as base reference
+ */
 function getDefaultUserDir(): string {
-    const home = os.homedir();
-    const platform = process.platform;
+    try {
+        const globalStorage = vscode.env.appRoot;
 
-    if (platform === "win32") { // Windows
-        return path.join(process.env.APPDATA || path.join(home, "AppData", "Roaming"), "Code", "User");
-    } else if (platform === "darwin") { // MacOS
-        return path.join(home, "Library", "Application Support", "Code", "User");
-    } else { // Linux
+        if (!globalStorage) {
+            throw new Error("appRoot not available");
+        }
+        return globalStorage;
+    } catch {
+        // fallback
+        const home = os.homedir();
         return path.join(home, ".config", "Code", "User");
     }
 }
 
+/**
+ * Settings should be modified via VSCode API, not file paths.
+ */
 export function getUserSettingsPath(): string {
-    // const devDir = getDevHostUserDir();
     const baseDir = getDefaultUserDir();
-    return path.join(baseDir, "settings.json");
+    return path.join(baseDir, "User", "settings.json");
 }
 
 export function getUserKeybindingsPath(): string {
     const baseDir = getDefaultUserDir();
-    return path.join(baseDir, "keybindings.json");
+    return path.join(baseDir, "User", "keybindings.json");
 }
