@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/srinivas-batthula/code-snippets-platform"
   },
-  "version": "1.1.2",
+  "version": "3.0.0",
   "engines": {
     "vscode": "^1.80.0"
   },
