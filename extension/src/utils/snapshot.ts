@@ -213,30 +213,67 @@ Rollback attempted.`
 }
 
 export async function mergeSettings(newSettings: Record<string, any>, settingsPath: string) {
-    backupFile(settingsPath);
+    try {
+        backupFile(settingsPath);
+    } catch (err) {
+        console.warn("[SnipZen] Backup failed:", err);
+    }
 
-    //use VSCode API...
     const config = vscode.workspace.getConfiguration();
 
-    let count = 0;
+    let successCount = 0;
+    let skippedCount = 0;
+    let failedCount = 0;
 
     for (const [key, value] of Object.entries(newSettings)) {
-        const existing = config.get(key);
+        try {
+            // Validate key
+            if (!key || typeof key !== "string") {
+                console.warn(`[SnipZen] Invalid key skipped: ${key}`);
+                skippedCount++;
+                continue;
+            }
 
-        // Only add if not present
-        if (!existing || existing === undefined) {
-            // Safe cross-platform update
+            // Check if 'setting' is registered
+            const inspected = config.inspect(key);
+            if (!inspected) {
+                console.warn(
+                    `[SnipZen] Unregistered setting skipped: ${key}`
+                );
+                skippedCount++;
+                continue;
+            }
+
+            // Only add if truly undefined (important fix)
+            const existing = config.get(key);
+            if (existing !== undefined) {
+                skippedCount++;
+                continue;
+            }
+
             await config.update(
                 key,
                 value,
                 vscode.ConfigurationTarget.Global
             );
+            successCount++;
+        } catch (err: any) {
+            failedCount++;
 
-            count++;
+            console.error(
+                `[SnipZen] Failed to apply setting: ${key}`,
+                err
+            );
+            // Continue loop no matter what
+            continue;
         }
     }
 
-    return { count };
+    return {
+        count: successCount,
+        skippedCount,
+        failedCount,
+    };
 }
 
 export async function mergeKeybindings(newKeybindings: any[], keybindingsPath: string) {
