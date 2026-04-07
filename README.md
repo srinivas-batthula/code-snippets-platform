@@ -33,6 +33,10 @@ A productivity platform to import/export/share VS Code snippets & environment sn
 
 - **Native VSCode Extension** — Seamless, In-editor experience without breaking developer flow
 
+### Short Summary
+
+**Snipzen** acts as a ***Google Drive*** specifically tailored for your VS Code editor, ensuring that your favorite blocks of code and your perfect editor environment follow you wherever you go.
+
 ## 🚀 Usage
 
 ### 1. Open Menu / Intro panel
