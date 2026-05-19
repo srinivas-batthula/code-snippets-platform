@@ -18,17 +18,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
+          cache: 'false'  # Disable automatic caching at root
 
-      - name: Install dependencies
-        run: ./install.sh
+      # Cache Web dependencies
+      - name: Cache Web node_modules
+        uses: actions/cache@v3
+        with:
+          path: web/node_modules
+          key: web-${{ runner.os }}-node-${{ hashFiles('web/package-lock.json') }}
+      
+      - name: Install & Build Web deps
+        working-directory: ./web
+        run: npm install && npm run build
 
-      - name: Build Web
-        run: cd web && npm run build
-
-      - name: Build Extension
-        run: cd extension && npm run pretest
+      # Cache Extension dependencies
+      - name: Cache Extension node_modules
+        uses: actions/cache@v3
+        with:
+          path: extension/node_modules
+          key: extension-${{ runner.os }}-node-${{ hashFiles('extension/package-lock.json') }}
+      
+      - name: Install & Build Extension
+        working-directory: ./extension
+        run: npm install && npm run pretest
