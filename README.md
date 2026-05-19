@@ -230,6 +230,28 @@ snipzen/
 This project is licensed under the MIT License - see the
 [LICENSE](./LICENSE) file for details.
 
+## Analytics
+
+<div align="center">
+  
+![Alt](https://repobeats.axiom.co/api/embed/b80831949b001dad0bba8017cf2c116ec7ad3d8b.svg "Repobeats analytics image")
+
+</div>
+
+## Our Contributors
+
+Thanks goes to these wonderful people:  
+
+<br/>
+
+<div align="center">
+  <a href="https://github.com/srinivas-batthula/code-snippets-platform/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=srinivas-batthula/code-snippets-platform" />
+  </a>
+</div>
+
+<br/>
+
 ## 📬 Contact / Support
 
 - [![Website](https://img.shields.io/badge/Website-Srinivas%20Batthula-blue?style=flat&logo=googlechrome&logoColor=white)](https://srinivas-batthula.me) [![Email](https://img.shields.io/badge/Email-Srinivas%20Batthula-red?style=flat&logo=gmail&logoColor=white)](mailto:srinivasbatthula05.official@gmail.com)
@@ -240,3 +262,12 @@ This project is licensed under the MIT License - see the
 
 - **Srinivas Batthula [@srinivas-batthula](https://github.com/srinivas-batthula)**
 - **Himanshu Bijja [@himanshubijja](https://github.com/himanshubijja)**
+
+
+<div align="center">
+
+<p><strong>Made with ❤️ by <a href="https://github.com/srinivas-batthula/code-snippets-platform">SnipZen Team</a></strong></p>
+
+<h3>⭐ Star us on GitHub — it motivates us a lot!</h3>
+
+</div>

@@ -54,3 +54,12 @@ We welcome contributions!  Steps to contribute:
 **Reporting issues:**
 - Use [Issues](https://github.com/srinivas-batthula/code-snippets-platform/issues)
 - Provide clear steps to reproduce and screenshots/GIFs if possible
+
+## Coding Guidelines
+
+- Follow the templates at [.github/](https://github.com/srinivas-batthula/code-snippets-platform/tree/main/.github) for Opening Issues & PRs.
+- Use clear, descriptive commit messages.
+- Follow the existing code style (use Prettier/ESLint if available).
+- Write modular, well-documented code.
+- Add or update tests for new features or bug fixes.
+- Keep PRs focused and minimal.

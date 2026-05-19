@@ -11,8 +11,8 @@ if [ -d "extension" ]; then
     cd extension || exit
     npm install
 
-    echo "Compiling VSCode extension..."
-    npm run compile
+    # echo "Compiling VSCode extension..."
+    # npm run compile
     cd ..
 else
     echo "❌ 'extension' folder not found!"
@@ -24,9 +24,9 @@ if [ -d "web" ]; then
     cd web || exit
     npm install
 
-    echo "Starting Next.js server..."
-    echo "Press Ctrl+C to stop."
-    npm run dev
+    # echo "Starting Next.js server..."
+    # echo "Press Ctrl+C to stop."
+    # npm run dev
 else
     echo "❌ 'web' folder not found!"
 fi
