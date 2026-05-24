@@ -9,6 +9,10 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
+export const metadata = {
+  title: "SnipZen",
+  description: "Developer platform to manage and sync code snippets",
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
